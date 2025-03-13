@@ -1,0 +1,82 @@
+# .htaccess
+# Main .htaccess file for the application
+
+# Enable URL rewriting
+RewriteEngine On
+
+# Set base path if not in the root directory
+# RewriteBase /bug-tracker/
+
+# Secure sensitive files
+# Deny access to config files
+<FilesMatch "^(config|database|mailgun)\.php$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>
+
+# Deny access to .git directory
+RedirectMatch 404 /\.git
+
+# Deny access to files with specific extensions
+<FilesMatch "\.(ini|log|sh|sql|json)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Allow access only to necessary file types
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|svg|ico|pdf|html|htm|xml|txt|xls|xlsx|doc|docx|csv)$">
+    Order deny,allow
+    Allow from all
+</FilesMatch>
+
+# Custom error pages
+ErrorDocument 404 /views/errors/404.php
+ErrorDocument 403 /views/errors/403.php
+ErrorDocument 500 /views/errors/500.php
+
+# Prevent directory listing
+Options -Indexes
+
+# Set secure headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Protect uploads directory - using FilesMatch instead of Directory
+# For PHP files in uploads directory
+<FilesMatch "^uploads/.*\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# For all files in uploads directory
+<FilesMatch "^uploads/.*$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Allow specific file types in uploads directory
+<FilesMatch "^uploads/.*\.(jpg|jpeg|png|gif|pdf|doc|docx|xls|xlsx|txt|csv)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Handle URLs
+# Redirect trailing slashes
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# Route all requests to appropriate files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/(.*)$ api/$1 [L]
+
+# PHP settings
+php_flag display_errors Off
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+php_value max_execution_time 30
+php_value memory_limit 128M

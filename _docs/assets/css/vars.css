@@ -1,0 +1,52 @@
+/* assets/css/vars.css */
+:root {
+  --white: #EEE;
+  --light: #C1BDD6;
+  --dark: #201E5B;
+  --darker: #131857;
+  --error: #d42d00;
+  
+  /* Additional functional colors */
+  --success: #28a745;
+  --warning: #ffc107;
+  --info: #17a2b8;
+  
+  /* Status colors */
+  --status-new: #17a2b8;
+  --status-needs-clarification: #ffc107;
+  --status-assigned: #6f42c1;
+  --status-in-progress: #007bff;
+  --status-in-review: #fd7e14;
+  --status-complete: #28a745;
+  --status-rejected: #dc3545;
+  --status-ignored: #6c757d;
+  
+  /* Priority colors */
+  --priority-1-critical: #dc3545;
+  --priority-1-important: #fd7e14;
+  --priority-2-nice-to-have: #28a745;
+  --priority-3-feature-request: #17a2b8;
+  --priority-4-nice-to-have: #6c757d;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Font sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  
+  /* Border radius */
+  --border-radius: 4px;
+  
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
