@@ -6,6 +6,7 @@
 define('DEBUG', true);
 
 // Application paths
+define('SITE_NAME', 'TickBug');
 define('BASE_URL', 'http://localhost/bug-tracker');
 define('ROOT_PATH', dirname(__DIR__));
 define('UPLOADS_PATH', ROOT_PATH . '/uploads');

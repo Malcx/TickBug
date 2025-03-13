@@ -3,6 +3,8 @@
  * Authentication related JavaScript
  */
 
+
+
 $(document).ready(function() {
     // Login form submission
     $("#loginForm").submit(function(event) {

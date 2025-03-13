@@ -7,7 +7,7 @@ The main footer template that's included at the bottom of each page
     
     <footer class="footer">
         <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Bug Tracker. All rights reserved.</p>
+            <p>&copy; <?php echo date('Y'); ?> TickBug. All rights reserved.</p>
         </div>
     </footer>
     

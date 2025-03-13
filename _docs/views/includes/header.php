@@ -7,18 +7,19 @@ The main header template that's included at the top of each page
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($pageTitle) ? $pageTitle . ' - Bug Tracker' : 'Bug Tracker'; ?></title>
+    <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' . SITE_NAME : SITE_NAME; ?></title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/vars.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/responsive.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <script src="/assets/js/config.js"></script>
 </head>
 <body>
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <a href="<?php echo BASE_URL; ?>" class="nav-brand">Bug Tracker</a>
+                <a href="<?php echo BASE_URL; ?>" class="nav-brand"><?php echo SITE_NAME; ?></a>
                 <button class="nav-toggle" id="navToggle">☰</button>
                 <ul class="nav-links" id="navLinks">
                     <?php if (isLoggedIn()): ?>
