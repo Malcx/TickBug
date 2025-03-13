@@ -16,9 +16,10 @@ require_once ROOT_PATH . '/views/includes/header.php';
     </div>
     <div class="col-4 text-right">
         <div class="btn-group">
-            <a href="<?php echo BASE_URL; ?>/reports.php?type=project<?php echo isset($_GET['project_id']) ? '&project_id=' . $_GET['project_id'] : ''; ?>" class="btn btn-secondary">Project Status</a>
-            <a href="<?php echo BASE_URL; ?>/reports.php?type=tickets<?php echo isset($_GET['project_id']) ? '&project_id=' . $_GET['project_id'] : ''; ?>" class="btn btn-secondary">Tickets by Status</a>
-            <a href="<?php echo BASE_URL; ?>/reports.php?type=productivity<?php echo isset($_GET['project_id']) ? '&project_id=' . $_GET['project_id'] : ''; ?>" class="btn btn-secondary">Team Productivity</a>
+            <!-- We'll use the links without project_id so they show the project selection screen -->
+            <a href="<?php echo BASE_URL; ?>/reports.php?type=project" class="btn btn-secondary">Project Status</a>
+            <a href="<?php echo BASE_URL; ?>/reports.php?type=tickets" class="btn btn-secondary">Tickets by Status</a>
+            <a href="<?php echo BASE_URL; ?>/reports.php?type=productivity" class="btn btn-secondary">Team Productivity</a>
         </div>
     </div>
 </div>

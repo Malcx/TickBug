@@ -1,7 +1,4 @@
 <?php
-
-// ------------------------------------------------------------
-
 // reports.php
 // Reports page
 
@@ -25,6 +22,15 @@ $userId = getCurrentUserId();
 $reportType = isset($_GET['type']) ? $_GET['type'] : 'overview';
 $projectId = isset($_GET['project_id']) ? (int)$_GET['project_id'] : null;
 
+// Handle project selection form if the report type requires a project ID but none was provided
+if (($reportType == 'project' || $reportType == 'tickets' || $reportType == 'productivity') && !$projectId) {
+    // Show project selection screen instead of error
+    $projects = getUserProjects($userId);
+    $pageTitle = 'Select Project for Report';
+    require_once ROOT_PATH . '/views/reports/select_project.php';
+    exit;
+}
+
 // If project ID is provided, check if user has access
 if ($projectId) {
     $userRole = getUserProjectRole($userId, $projectId);
@@ -44,12 +50,7 @@ if ($projectId) {
 // Generate report based on type
 switch ($reportType) {
     case 'project':
-        // Project status report
-        if (!$projectId) {
-            setFlashMessage('error', 'Project ID is required for project status report.');
-            redirect(BASE_URL . '/reports.php');
-        }
-        
+        // Project status report - requires project ID
         $report = generateProjectStatusReport($projectId);
         $pageTitle = 'Project Status Report: ' . $report['project']['name'];
         require_once ROOT_PATH . '/views/reports/project.php';

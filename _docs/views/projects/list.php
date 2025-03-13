@@ -1,6 +1,6 @@
 <!--
 views/projects/list.php
-The projects list page template
+The projects list page template with archived projects link
 -->
 <?php
 // Set page title
@@ -21,6 +21,7 @@ $projects = getUserProjects($userId);
     </div>
     <div class="col-6 text-right">
         <a href="<?php echo BASE_URL; ?>/projects.php?action=create" class="btn btn-primary">Create New Project</a>
+        <a href="<?php echo BASE_URL; ?>/projects.php?action=archived" class="btn btn-secondary ml-2">View Archived Projects</a>
     </div>
 </div>
 
