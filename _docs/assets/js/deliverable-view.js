@@ -236,9 +236,18 @@ function filterTickets() {
         }
         
         var priorityMatch = (priority === "" || ticketPriority === priority);
-        var assigneeMatch = (assignee === "" || 
-                          ticketAssignee === assignee || 
-                          (assignee === "unassigned" && !ticketAssignee));
+        
+        // Special handling for "Assigned to me" filter
+        var assigneeMatch = true;
+        if (assignee === "me") {
+            // Current user ID is available as a global variable (currentUserId)
+            assigneeMatch = (ticketAssignee == currentUserId);
+        } else if (assignee === "unassigned") {
+            assigneeMatch = (!ticketAssignee);
+        } else {
+            assigneeMatch = (assignee === "" || ticketAssignee == assignee);
+        }
+        
         var searchMatch = (search === "" || ticketTitle.indexOf(search) > -1);
         
         if (statusMatch && priorityMatch && assigneeMatch && searchMatch) {

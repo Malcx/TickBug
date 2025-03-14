@@ -113,6 +113,8 @@ require_once ROOT_PATH . '/views/includes/header.php';
                                 <div class="col-6">
                                     <select id="filter-assignee" class="form-control form-control-sm">
                                         <option value="">All Assignees</option>
+                                        <option value="me">Assigned to me</option>
+                                        <option value="" disabled>──────────</option>
                                         <option value="unassigned">Unassigned</option>
                                         <?php
                                         $projectUsers = getProjectUsers($project['project_id']);
@@ -226,9 +228,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
                         </div>
                     </div>
                     
-                    <div class="progress mt-2" style="height: 15px;">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $completionRate; ?>%;" aria-valuenow="<?php echo $completionRate; ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $completionRate; ?>%</div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -274,6 +274,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
 // Pass necessary PHP variables to JavaScript
 var deliverableId = <?php echo $deliverableId; ?>;
 var baseUrl = '<?php echo BASE_URL; ?>';
+var currentUserId = <?php echo $userId; ?>;
 </script>
 
 <?php
