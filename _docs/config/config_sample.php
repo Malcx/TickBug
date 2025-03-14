@@ -7,7 +7,7 @@ define('DEBUG', true);
 
 // Application paths
 define('SITE_NAME', 'TickBug');
-define('BASE_URL', 'http://localhost/bug-tracker');
+define('BASE_URL', 'http://localhost/tickbug');
 define('ROOT_PATH', dirname(__DIR__));
 define('UPLOADS_PATH', ROOT_PATH . '/uploads');
 define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB
