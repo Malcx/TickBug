@@ -1,9 +1,6 @@
 <?php
-
-// ------------------------------------------------------------
-
 // deliverables.php
-// Deliverables page
+// Deliverables page with updated routing to support view action
 
 // Include helper functions
 require_once 'includes/helpers.php';
@@ -82,7 +79,13 @@ switch ($action) {
         break;
         
     default:
-        // Redirect to projects page
-        redirect(BASE_URL . '/projects.php');
+        // Handle view deliverable (when ID is provided)
+        if (isset($_GET['id']) && !empty($_GET['id'])) {
+            $deliverableId = (int)$_GET['id'];
+            require_once ROOT_PATH . '/views/deliverables/view.php';
+        } else {
+            // Redirect to projects page if no ID provided
+            redirect(BASE_URL . '/projects.php');
+        }
         break;
 }

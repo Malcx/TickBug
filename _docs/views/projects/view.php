@@ -1,6 +1,6 @@
 <!--
 views/projects/view.php
-The project view page template
+Modified project view page template with collapsible deliverables
 -->
 <?php
 // Set page title
@@ -16,12 +16,31 @@ $deliverables = getProjectDeliverables($project['project_id']);
 // Get project users
 require_once ROOT_PATH . '/includes/users.php';
 $projectUsers = getProjectUsers($project['project_id']);
+
+// Calculate project stats
+$totalTickets = 0;
+$openTickets = 0;
+
+foreach ($deliverables as $deliverable) {
+    if (isset($deliverable['tickets'])) {
+        $totalTickets += count($deliverable['tickets']);
+        foreach ($deliverable['tickets'] as $ticket) {
+            if ($ticket['status'] !== 'Complete' && $ticket['status'] !== 'Rejected' && $ticket['status'] !== 'Ignored') {
+                $openTickets++;
+            }
+        }
+    }
+}
 ?>
 
 <div class="row mb-3">
     <div class="col-8">
         <h1><?php echo htmlspecialchars($project['name']); ?></h1>
         <p><?php echo htmlspecialchars($project['description']); ?></p>
+        <div class="project-stats mb-3">
+            <span class="badge badge-info">Total Tickets: <?php echo $totalTickets; ?></span>
+            <span class="badge badge-warning">Open Tickets: <?php echo $openTickets; ?></span>
+        </div>
     </div>
     <div class="col-4 text-right">
         <?php if ($userRole === 'Owner' || $userRole === 'Project Manager'): ?>
@@ -45,12 +64,24 @@ $projectUsers = getProjectUsers($project['project_id']);
             </div>
         <?php else: ?>
             <div id="deliverables-container">
-                <?php foreach ($deliverables as $deliverable): ?>
+                <?php foreach ($deliverables as $deliverable): 
+                    // Calculate ticket counts directly in PHP
+                    $totalTickets = count($deliverable['tickets']);
+                    $openTickets = 0;
+                    
+                    foreach ($deliverable['tickets'] as $ticket) {
+                        if ($ticket['status'] !== 'Complete' && $ticket['status'] !== 'Rejected' && $ticket['status'] !== 'Ignored') {
+                            $openTickets++;
+                        }
+                    }
+                ?>
                     <div class="card mb-3 deliverable-card" data-id="<?php echo $deliverable['deliverable_id']; ?>">
-                        <div class="card-header">
+                        <div class="card-header deliverable-header" style="cursor: pointer;">
                             <div class="row">
-                                <div class="col-8">
+                                <div class="col-8 d-flex align-items-center">
                                     <h3><?php echo htmlspecialchars($deliverable['name']); ?></h3>
+                                    <span class="ml-3 badge badge-info"><?php echo $openTickets; ?> open / <?php echo $totalTickets; ?> total</span>
+                                    <span class="ml-2 navigate-icon">→</span>
                                 </div>
                                 <div class="col-4 text-right">
                                     <?php if ($userRole !== 'Viewer' && $userRole !== 'Tester'): ?>
@@ -61,37 +92,7 @@ $projectUsers = getProjectUsers($project['project_id']);
                             </div>
                         </div>
                         <div class="card-body">
-                            <p><?php echo htmlspecialchars($deliverable['description']); ?></p>
-                            
-                            <?php if (isset($deliverable['tickets']) && !empty($deliverable['tickets'])): ?>
-                                <h4>Tickets</h4>
-                                <div class="tickets-container" data-deliverable-id="<?php echo $deliverable['deliverable_id']; ?>">
-                                    <?php foreach ($deliverable['tickets'] as $ticket): ?>
-                                        <div class="ticket-card draggable" data-id="<?php echo $ticket['ticket_id']; ?>">
-                                            <div class="row">
-                                                <div class="col-8">
-                                                    <h5><a href="<?php echo BASE_URL; ?>/tickets.php?id=<?php echo $ticket['ticket_id']; ?>"><?php echo htmlspecialchars($ticket['title']); ?></a></h5>
-                                                </div>
-                                                <div class="col-4 text-right">
-                                                    <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status'])); ?>"><?php echo $ticket['status']; ?></span>
-                                                    <span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority'])); ?>"><?php echo $ticket['priority']; ?></span>
-                                                </div>
-                                            </div>
-                                            <p>
-                                                <?php if (!empty($ticket['assigned_to'])): ?>
-                                                    <small>Assigned to: <?php echo htmlspecialchars($ticket['assigned_name']); ?></small>
-                                                <?php else: ?>
-                                                    <small>Unassigned</small>
-                                                <?php endif; ?>
-                                            </p>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php else: ?>
-                                <div class="alert alert-info">
-                                    No tickets have been added to this deliverable yet.
-                                </div>
-                            <?php endif; ?>
+                            <p class="deliverable-description"><?php echo htmlspecialchars($deliverable['description']); ?></p>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -100,81 +101,36 @@ $projectUsers = getProjectUsers($project['project_id']);
     </div>
     
     <div class="col-3">
-        <!-- Users Section -->
-        <div class="card mb-3">
-            <div class="card-header">
-                <h3>Project Users</h3>
-            </div>
-            <div class="card-body">
-                <div id="project-users" class="drag-container">
-                    <?php foreach ($projectUsers as $user): ?>
-                        <div class="user-card" data-id="<?php echo $user['user_id']; ?>">
-                            <div class="row">
-                                <div class="col-12">
-                                    <p>
-                                        <strong><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></strong>
-                                        <br>
-                                        <small><?php echo $user['role']; ?></small>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Status Section -->
+        <!-- Project Team -->
         <div class="card">
             <div class="card-header">
-                <h3>Ticket Status</h3>
+                <h3>Project Team</h3>
             </div>
             <div class="card-body">
-                <div id="status-container">
-                    <?php
-                    $statuses = ['New', 'Needs clarification', 'Assigned', 'In progress', 'In review', 'Complete', 'Rejected', 'Ignored'];
-                    foreach ($statuses as $status):
-                        $statusClass = strtolower(str_replace(' ', '-', $status));
-                    ?>
-                    <div class="status-card drag-container" data-status="<?php echo $status; ?>">
-                        <div class="badge badge-<?php echo $statusClass; ?> mb-2"><?php echo $status; ?></div>
-                        <p class="status-description"><?php echo getStatusDescription($status); ?></p>
-                    </div>
+                <ul class="list-group">
+                    <?php foreach ($projectUsers as $user): ?>
+                        <li class="list-group-item">
+                            <div class="user-info">
+                                <strong><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></strong>
+                                <span class="badge badge-secondary"><?php echo $user['role']; ?></span>
+                            </div>
+                        </li>
                     <?php endforeach; ?>
-                </div>
+                </ul>
             </div>
         </div>
     </div>
 </div>
 
-<?php
-// Helper function to get status description
-function getStatusDescription($status) {
-    switch ($status) {
-        case 'New':
-            return 'Recently created, not yet addressed.';
-        case 'Needs clarification':
-            return 'More information needed before proceeding.';
-        case 'Assigned':
-            return 'Assigned to a team member but not started.';
-        case 'In progress':
-            return 'Work has begun on this ticket.';
-        case 'In review':
-            return 'Work completed, awaiting review.';
-        case 'Complete':
-            return 'Fully completed and verified.';
-        case 'Rejected':
-            return 'Cannot or will not be implemented.';
-        case 'Ignored':
-            return 'Intentionally set aside.';
-        default:
-            return '';
-    }
-}
-?>
 
+
+<!-- Include project scripts -->
 <script src="<?php echo BASE_URL; ?>/assets/js/projects.js"></script>
-<script src="<?php echo BASE_URL; ?>/assets/js/drag-drop.js"></script>
+<!-- Include our custom project view script -->
+<script src="<?php echo BASE_URL; ?>/assets/js/project-view.js"></script>
+
+<!-- Add custom CSS for project view -->
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/project-view.css">
 
 <?php
 // Include footer

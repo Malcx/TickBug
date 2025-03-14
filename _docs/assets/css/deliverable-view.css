@@ -1,0 +1,142 @@
+/* assets/css/deliverable-view.css */
+
+/* Ticket cards styling */
+.ticket-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-left: 3px solid transparent;
+    cursor: grab;
+}
+
+.ticket-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+    background-color: rgba(193, 189, 214, 0.1);
+}
+
+.ticket-card.ui-sortable-helper {
+    cursor: grabbing;
+    box-shadow: var(--shadow-md);
+    background-color: white;
+    transform: scale(1.02);
+    z-index: 1000;
+}
+
+/* Sortable placeholder styling */
+.ui-sortable-placeholder {
+    visibility: visible !important;
+    border: 1px dashed #ccc;
+    background-color: #f8f9fa;
+    height: 45px;
+    margin-bottom: 0.5rem;
+}
+
+/* Title link styling */
+.ticket-title {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.ticket-title:hover {
+    text-decoration: underline;
+}
+
+/* Status-based border colors */
+.ticket-card[data-status="New"] {
+    border-left-color: var(--status-new);
+}
+
+.ticket-card[data-status="Needs clarification"] {
+    border-left-color: var(--status-needs-clarification);
+}
+
+.ticket-card[data-status="Assigned"] {
+    border-left-color: var(--status-assigned);
+}
+
+.ticket-card[data-status="In progress"] {
+    border-left-color: var(--status-in-progress);
+}
+
+.ticket-card[data-status="In review"] {
+    border-left-color: var(--status-in-review);
+}
+
+.ticket-card[data-status="Complete"] {
+    border-left-color: var(--status-complete);
+}
+
+.ticket-card[data-status="Rejected"] {
+    border-left-color: var(--status-rejected);
+}
+
+.ticket-card[data-status="Ignored"] {
+    border-left-color: var(--status-ignored);
+}
+
+/* Status legend styling */
+.status-legend-item {
+    display: flex;
+    align-items: center;
+}
+
+.status-legend-item small {
+    margin-left: 5px;
+    font-size: 11px;
+}
+
+/* Badges */
+.badge {
+    font-size: 70%;
+}
+
+/* Deliverable stats */
+.deliverable-stats {
+    font-size: 14px;
+}
+
+h5 {
+    font-size: 16px;
+}
+
+.stat-label {
+    font-weight: 500;
+}
+
+/* Form controls */
+.form-control-sm {
+    height: calc(1.5em + 0.5rem + 2px);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+/* Notification styles */
+.floating-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: white;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.floating-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification-saving {
+    background-color: #007bff;
+}
+
+.notification-success {
+    background-color: #28a745;
+}
+
+.notification-error {
+    background-color: #dc3545;
+}

@@ -1,0 +1,55 @@
+/* assets/css/project-view.css */
+.deliverable-header {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.deliverable-header:hover {
+  background-color: rgba(193, 189, 214, 0.3);
+}
+
+.navigate-icon {
+  font-size: 14px;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+}
+
+.deliverable-card {
+  margin-bottom: 12px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.tickets-section {
+  padding-top: 16px;
+}
+
+.ticket-count {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-size: 85%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: var(--border-radius);
+  background-color: var(--light);
+  margin-left: 12px;
+}
+
+/* Add a hover effect to ticket cards */
+.ticket-card {
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  margin-bottom: 8px;
+  padding: 12px;
+  border-radius: var(--border-radius);
+  background-color: white;
+  border: 1px solid var(--light);
+}
+
+.ticket-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}

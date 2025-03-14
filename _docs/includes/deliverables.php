@@ -88,9 +88,10 @@ function getDeliverable($deliverableId) {
     $conn = getDbConnection();
     
     $stmt = $conn->prepare("
-        SELECT d.*, u.first_name, u.last_name
+        SELECT d.*, u.first_name, u.last_name, p.name as project_name
         FROM deliverables d
         JOIN users u ON d.created_by = u.user_id
+        JOIN projects p ON d.project_id = p.project_id
         WHERE d.deliverable_id = ?
     ");
     $stmt->bind_param("i", $deliverableId);

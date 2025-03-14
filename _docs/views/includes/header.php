@@ -12,12 +12,16 @@ The main header template that's included at the top of each page
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/grid.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/responsive.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/badges.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/modal.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/breadcrumbs.css"> 
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/project-view.css">
+   
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/config.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/modal.js"></script> <!-- Add the custom modal JS -->
+    <script src="<?php echo BASE_URL; ?>/assets/js/project-view.js"></script>
 </head>
 <body>
     <header class="header">

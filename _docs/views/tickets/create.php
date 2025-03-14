@@ -1,5 +1,5 @@
 <!--
-views/tickets/create.php
+views/tickets/create.php - Updated breadcrumbs
 Create ticket template
 -->
 <?php
@@ -17,6 +17,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/projects.php">Projects</a></li>
                 <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/projects.php?id=<?php echo $projectId; ?>"><?php echo htmlspecialchars($deliverable['project_name']); ?></a></li>
+                <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/deliverables.php?id=<?php echo $deliverableId; ?>"><?php echo htmlspecialchars($deliverable['name']); ?></a></li>
                 <li class="breadcrumb-item active" aria-current="page">Create Ticket</li>
             </ol>
         </nav>
@@ -98,7 +99,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
                     
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">Create Ticket</button>
-                        <a href="<?php echo BASE_URL; ?>/projects.php?id=<?php echo $projectId; ?>" class="btn btn-secondary">Cancel</a>
+                        <a href="<?php echo BASE_URL; ?>/deliverables.php?id=<?php echo $deliverableId; ?>" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             </div>
