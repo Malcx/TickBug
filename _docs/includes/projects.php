@@ -7,10 +7,11 @@
  * 
  * @param string $name Project name
  * @param string $description Project description
+ * @param string $themeColor Project theme color
  * @param int $userId User ID of creator
  * @return array Response with status and project data
  */
-function createProject($name, $description, $userId) {
+function createProject($name, $description, $themeColor, $userId) {
     $conn = getDbConnection();
     
     // Validate input
@@ -18,13 +19,18 @@ function createProject($name, $description, $userId) {
         return ['success' => false, 'message' => 'Project name is required.'];
     }
     
+    // Validate color format (should be a hex color like #201E5B)
+    if (!preg_match('/^#[a-fA-F0-9]{6}$/', $themeColor)) {
+        $themeColor = '#201E5B'; // Use default if invalid
+    }
+    
     // Start transaction
     $conn->begin_transaction();
     
     try {
         // Insert project
-        $stmt = $conn->prepare("INSERT INTO projects (name, description, created_by) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $name, $description, $userId);
+        $stmt = $conn->prepare("INSERT INTO projects (name, description, theme_color, created_by) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sssi", $name, $description, $themeColor, $userId);
         
         if (!$stmt->execute()) {
             throw new Exception("Failed to create project: " . $conn->error);
@@ -44,7 +50,8 @@ function createProject($name, $description, $userId) {
         // Log activity
         if (LOG_ACTIONS) {
             logActivity($userId, $projectId, 'project', $projectId, 'created', [
-                'name' => $name
+                'name' => $name,
+                'theme_color' => $themeColor
             ]);
         }
         
@@ -58,6 +65,7 @@ function createProject($name, $description, $userId) {
                 'project_id' => $projectId,
                 'name' => $name,
                 'description' => $description,
+                'theme_color' => $themeColor,
                 'created_by' => $userId
             ]
         ];
@@ -214,15 +222,21 @@ function getProjectStatistics($projectId) {
  * @param int $projectId Project ID
  * @param string $name Project name
  * @param string $description Project description
+ * @param string $themeColor Project theme color
  * @param int $userId User ID making the update
  * @return array Response with status and message
  */
-function updateProject($projectId, $name, $description, $userId) {
+function updateProject($projectId, $name, $description, $themeColor, $userId) {
     $conn = getDbConnection();
     
     // Validate input
     if (empty($name)) {
         return ['success' => false, 'message' => 'Project name is required.'];
+    }
+    
+    // Validate color format (should be a hex color like #201E5B)
+    if (!preg_match('/^#[a-fA-F0-9]{6}$/', $themeColor)) {
+        $themeColor = '#201E5B'; // Use default if invalid
     }
     
     // Check if user has permission to update project
@@ -233,14 +247,15 @@ function updateProject($projectId, $name, $description, $userId) {
     }
     
     // Update project
-    $stmt = $conn->prepare("UPDATE projects SET name = ?, description = ? WHERE project_id = ?");
-    $stmt->bind_param("ssi", $name, $description, $projectId);
+    $stmt = $conn->prepare("UPDATE projects SET name = ?, description = ?, theme_color = ? WHERE project_id = ?");
+    $stmt->bind_param("sssi", $name, $description, $themeColor, $projectId);
     
     if ($stmt->execute()) {
         // Log activity
         if (LOG_ACTIONS) {
             logActivity($userId, $projectId, 'project', $projectId, 'updated', [
-                'name' => $name
+                'name' => $name,
+                'theme_color' => $themeColor
             ]);
         }
         

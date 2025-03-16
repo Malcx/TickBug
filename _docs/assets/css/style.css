@@ -134,6 +134,11 @@ label {
   justify-content: space-between;
 }
 
+.nav img{
+  width:30px;
+  position: relative;
+  top:7px;
+}
 .nav-brand {
   font-size: var(--font-size-lg);
   font-weight: bold;

@@ -32,7 +32,7 @@ The main header template that's included at the top of each page
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <a href="<?php echo BASE_URL; ?>" class="nav-brand"><?php echo SITE_NAME; ?></a>
+                <a href="<?php echo BASE_URL; ?>" class="nav-brand"><img src="/logo.svg" /> <?php echo SITE_NAME; ?></a>
                 <button class="nav-toggle" id="navToggle">☰</button>
                 <ul class="nav-links" id="navLinks">
                     <?php if (isLoggedIn()): ?>

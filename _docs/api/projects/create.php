@@ -24,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Get current user ID
 $userId = getCurrentUserId();
 
-// Get form data
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $description = isset($_POST['description']) ? trim($_POST['description']) : '';
+$themeColor = isset($_POST['theme_color']) ? trim($_POST['theme_color']) : '#201E5B';
 
 // Validate form data
 if (empty($name)) {
@@ -35,7 +35,7 @@ if (empty($name)) {
 }
 
 // Create project
-$result = createProject($name, $description, $userId);
+$result = createProject($name, $description, $themeColor, $userId);
 
 // Return response
 sendJsonResponse($result);

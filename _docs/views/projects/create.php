@@ -27,6 +27,11 @@ require_once ROOT_PATH . '/views/includes/header.php';
                         <textarea id="description" name="description" rows="5"></textarea>
                     </div>
                     <div class="form-group">
+                        <label for="theme_color">Project Theme Color</label>
+                        <input type="color" id="theme_color" name="theme_color" value="#201E5B" required>
+                        <small class="form-text text-muted">Choose a theme color for this project.</small>
+                    </div>
+                    <div class="form-group">
                         <button type="submit" class="btn btn-primary">Create Project</button>
                         <a href="<?php echo BASE_URL; ?>/projects.php" class="btn btn-secondary">Cancel</a>
                     </div>

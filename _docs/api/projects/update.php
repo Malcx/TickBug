@@ -32,6 +32,7 @@ $userId = getCurrentUserId();
 $projectId = isset($_POST['project_id']) ? (int)$_POST['project_id'] : 0;
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $description = isset($_POST['description']) ? trim($_POST['description']) : '';
+$themeColor = isset($_POST['theme_color']) ? trim($_POST['theme_color']) : '#201E5B';
 
 // Validate form data
 if (empty($projectId)) {
@@ -45,7 +46,7 @@ if (empty($name)) {
 }
 
 // Update project
-$result = updateProject($projectId, $name, $description, $userId);
+$result = updateProject($projectId, $name, $description, $themeColor, $userId);
 
 // Return response
 sendJsonResponse($result);

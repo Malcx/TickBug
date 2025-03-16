@@ -265,3 +265,107 @@ function generatePagination($currentPage, $totalPages, $urlPattern) {
     
     return $html;
 }
+
+
+
+// Function to generate theme colors from a base color
+function generateThemeColors($hexColor) {
+    // Convert hex to RGB
+    $hex = ltrim($hexColor, '#');
+    $r = hexdec(substr($hex, 0, 2));
+    $g = hexdec(substr($hex, 2, 2));
+    $b = hexdec(substr($hex, 4, 2));
+    
+    // Convert RGB to HSL
+    $r_percent = $r / 255;
+    $g_percent = $g / 255;
+    $b_percent = $b / 255;
+    
+    $max_color = max($r_percent, $g_percent, $b_percent);
+    $min_color = min($r_percent, $g_percent, $b_percent);
+    
+    $l = ($max_color + $min_color) / 2;
+    $d = $max_color - $min_color;
+    
+    if($d == 0) {
+        $h = $s = 0; // achromatic
+    } else {
+        $s = $d / (1 - abs(2 * $l - 1));
+        
+        switch($max_color) {
+            case $r_percent:
+                $h = 60 * fmod((($g_percent - $b_percent) / $d), 6);
+                if ($b_percent > $g_percent) {
+                    $h += 360;
+                }
+                break;
+            case $g_percent:
+                $h = 60 * (($b_percent - $r_percent) / $d + 2);
+                break;
+            case $b_percent:
+                $h = 60 * (($r_percent - $g_percent) / $d + 4);
+                break;
+        }
+    }
+    
+    // Create darker shade (reduce lightness)
+    $darker_l = max($l - 0.15, 0.1);
+    
+    // Create lighter shade
+    $lighter_l = min(0.85, $l + 0.4); // much lighter
+    $lighter_s = max(0.1, $s - 0.2);  // less saturated
+    
+    // Convert back to hex
+    $dark = $hexColor;
+    $darker = hslToHex($h, $s, $darker_l);
+    $light = hslToHex($h, $lighter_s, $lighter_l);
+    
+    return [
+        'dark' => $dark,
+        'darker' => $darker,
+        'light' => $light,
+    ];
+}
+
+// Function to convert HSL to hex
+function hslToHex($h, $s, $l) {
+    $h /= 60;
+    $s = min(max($s, 0), 1);
+    $l = min(max($l, 0), 1);
+    
+    $c = (1 - abs(2 * $l - 1)) * $s;
+    $x = $c * (1 - abs(fmod($h, 2) - 1));
+    $m = $l - $c/2;
+    
+    if ($h < 1) {
+        $r = $c;
+        $g = $x;
+        $b = 0;
+    } elseif ($h < 2) {
+        $r = $x;
+        $g = $c;
+        $b = 0;
+    } elseif ($h < 3) {
+        $r = 0;
+        $g = $c;
+        $b = $x;
+    } elseif ($h < 4) {
+        $r = 0;
+        $g = $x;
+        $b = $c;
+    } elseif ($h < 5) {
+        $r = $x;
+        $g = 0;
+        $b = $c;
+    } else {
+        $r = $c;
+        $g = 0;
+        $b = $x;
+    }
+    
+    $r = sprintf('%02x', max(0, min(255, round(($r + $m) * 255))));
+    $g = sprintf('%02x', max(0, min(255, round(($g + $m) * 255))));
+    $b = sprintf('%02x', max(0, min(255, round(($b + $m) * 255))));
+    
+    return "#$r$g$b";
+}
