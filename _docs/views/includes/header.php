@@ -8,6 +8,11 @@ The main header template that's included at the top of each page
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' . SITE_NAME : SITE_NAME; ?></title>
+
+    <!-- Place these lines in the <head> section of your HTML -->
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <link rel="alternate icon" href="/logo.ico"> <!-- Fallback for browsers that don't support SVG favicons -->
+
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/vars.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/grid.css">
