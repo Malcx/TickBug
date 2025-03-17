@@ -1,4 +1,4 @@
-/* assets/css/deliverable-view.css */
+/* assets/css/deliverable-view.css - Updated for priority grouping */
 
 /* Ticket cards styling */
 .ticket-card {
@@ -107,6 +107,69 @@ h5 {
     height: calc(1.5em + 0.5rem + 2px);
     padding: 0.25rem 0.5rem;
     font-size: 0.8rem;
+}
+
+/* Priority grouping styles */
+.priority-group {
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.priority-header {
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.priority-tickets-container {
+    padding: 10px;
+    min-height: 60px;
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+.ticket-count {
+    font-size: 12px;
+    color: #666;
+    background-color: #e9ecef;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* Priority-based header colors */
+.priority-group[data-priority="1-Critical"] .priority-header {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-bottom-color: rgba(220, 53, 69, 0.2);
+}
+
+.priority-group[data-priority="1-Important"] .priority-header {
+    background-color: rgba(253, 126, 20, 0.1);
+    border-bottom-color: rgba(253, 126, 20, 0.2);
+}
+
+.priority-group[data-priority="2-Nice to have"] .priority-header {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-bottom-color: rgba(40, 167, 69, 0.2);
+}
+
+.priority-group[data-priority="3-Feature Request"] .priority-header {
+    background-color: rgba(23, 162, 184, 0.1);
+    border-bottom-color: rgba(23, 162, 184, 0.2);
+}
+
+.priority-group[data-priority="4-Nice to have"] .priority-header {
+    background-color: rgba(108, 117, 125, 0.1);
+    border-bottom-color: rgba(108, 117, 125, 0.2);
+}
+
+.priority-group[data-priority="6-Not set"] .priority-header {
+    background-color: rgba(108, 117, 125, 0.1);
+    border-bottom-color: rgba(108, 117, 125, 0.2);
 }
 
 /* Notification styles */

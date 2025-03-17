@@ -9,8 +9,8 @@
  * @param string $title Ticket title
  * @param string $description Ticket description
  * @param string $url Ticket URL
- * @param string $status Ticket status
- * @param string $priority Ticket priority
+ * @param string $statusId Ticket status ID
+ * @param string $priorityId Ticket priority ID
  * @param int|null $assignedTo User ID assigned to ticket (optional)
  * @param int $userId User ID of creator
  * @param array $files Array of uploaded files (optional)
@@ -49,13 +49,26 @@ function createTicket($deliverableId, $title, $description, $url, $statusId, $pr
         }
     }
     
-    // Get the max display order for the deliverable
+    // Get priority name for the priority ID
+    $stmt = $conn->prepare("SELECT name FROM priorities WHERE priority_id = ?");
+    $stmt->bind_param("i", $priorityId);
+    $stmt->execute();
+    $priorityResult = $stmt->get_result();
+    $priorityName = '';
+    
+    if ($priorityResult->num_rows > 0) {
+        $row = $priorityResult->fetch_assoc();
+        $priorityName = $row['name'];
+    }
+    
+    // Get the max display order for tickets with this priority in this deliverable
     $stmt = $conn->prepare("
-        SELECT MAX(display_order) as max_order
-        FROM tickets
-        WHERE deliverable_id = ?
+        SELECT MAX(t.display_order) as max_order
+        FROM tickets t
+        JOIN priorities p ON t.priority_id = p.priority_id
+        WHERE t.deliverable_id = ? AND p.name = ?
     ");
-    $stmt->bind_param("i", $deliverableId);
+    $stmt->bind_param("is", $deliverableId, $priorityName);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
@@ -129,14 +142,14 @@ function createTicket($deliverableId, $title, $description, $url, $statusId, $pr
                         <h2>Ticket Assignment</h2>
                         <p>You have been assigned a new ticket in the project "' . htmlspecialchars($project['name']) . '".</p>
                         <p><strong>Ticket:</strong> ' . htmlspecialchars($title) . '</p>
-                        <p><strong>Priority:</strong> ' . $priority . '</p>
+                        <p><strong>Priority:</strong> ' . $priorityName . '</p>
                         <p>Please log in to view and update this ticket.</p>
                     ';
                     
                     $notificationText = "Ticket Assignment\n\n" .
                                    "You have been assigned a new ticket in the project \"" . $project['name'] . "\".\n\n" .
                                    "Ticket: " . $title . "\n" .
-                                   "Priority: " . $priority . "\n\n" .
+                                   "Priority: " . $priorityName . "\n\n" .
                                    "Please log in to view and update this ticket.";
                     
                     sendEmail($assigneeInfo['email'], 'Ticket Assignment: ' . $title, $notificationHtml, $notificationText);
@@ -147,6 +160,18 @@ function createTicket($deliverableId, $title, $description, $url, $statusId, $pr
         // Commit transaction
         $conn->commit();
         
+        // Get status name for response
+        $stmt = $conn->prepare("SELECT name FROM statuses WHERE status_id = ?");
+        $stmt->bind_param("i", $statusId);
+        $stmt->execute();
+        $statusResult = $stmt->get_result();
+        $statusName = '';
+        
+        if ($statusResult->num_rows > 0) {
+            $row = $statusResult->fetch_assoc();
+            $statusName = $row['name'];
+        }
+        
         return [
             'success' => true, 
             'message' => 'Ticket created successfully.',
@@ -156,8 +181,10 @@ function createTicket($deliverableId, $title, $description, $url, $statusId, $pr
                 'title' => $title,
                 'description' => $description,
                 'url' => $url,
-                'status' => $status,
-                'priority' => $priority,
+                'status_id' => $statusId,
+                'status_name' => $statusName,
+                'priority_id' => $priorityId,
+                'priority_name' => $priorityName,
                 'assigned_to' => $assignedTo,
                 'created_by' => $userId,
                 'display_order' => $displayOrder,
@@ -326,7 +353,7 @@ function getCommentFiles($commentId) {
  * @param array $files Array of new uploaded files (optional)
  * @return array Response with status and message
  */
-function updateTicket($ticketId, $title, $description, $url, $status, $priorityId, $assignedTo, $userId, $files = []) {
+function updateTicket($ticketId, $title, $description, $url, $statusId, $priorityId, $assignedTo, $userId, $files = []) {
     $conn = getDbConnection();
     
     // Validate input
@@ -342,7 +369,7 @@ function updateTicket($ticketId, $title, $description, $url, $status, $priorityI
     }
     
     $projectId = $ticket['project_id'];
-    $oldStatus = $ticket['status'];
+    $oldStatus = $ticket['status_id'];
     $oldAssignedTo = $ticket['assigned_to'];
     
     // Check if user has permission
@@ -446,7 +473,7 @@ function updateTicket($ticketId, $title, $description, $url, $status, $priorityI
         }
         
         // Handle notifications for status changes
-        if ($status !== $oldStatus) {
+        if ($statusId !== $oldStatus) {
             // Notify the creator if they're not the one updating
             if ($ticket['created_by'] != $userId) {
                 $creatorPrefs = getProjectNotificationPreferences($projectId, $ticket['created_by']);
@@ -708,7 +735,7 @@ function changeTicketStatus($ticketId, $statusId, $userId) {
     }
     
     $projectId = $ticket['project_id'];
-    $oldStatus = $ticket['status'];
+    $oldStatus = $ticket['status_id'];
     
     // Check if user has permission
     $userRole = getUserProjectRole($userId, $projectId);

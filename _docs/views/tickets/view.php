@@ -21,6 +21,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/projects.php">Projects</a></li>
                 <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/projects.php?id=<?php echo $project['project_id']; ?>"><?php echo htmlspecialchars($project['name']); ?></a></li>
+                <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/deliverables.php?id=<?php echo $ticket['deliverable_id']; ?>"><?php echo htmlspecialchars($deliverable['name']); ?></a></li>
                 <li class="breadcrumb-item active" aria-current="page"><?php echo htmlspecialchars($ticket['title']); ?></li>
             </ol>
         </nav>

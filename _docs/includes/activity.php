@@ -197,7 +197,7 @@ function formatActivityDescription($activity) {
                     
                     return $userName . ' reassigned ticket from "' . $oldName . '" to "' . $newName . '"';
                 case 'status_changed':
-                    return $userName . ' changed ticket status from "' . $details['old_status'] . '" to "' . $details['new_status'] . '"';
+                    return $userName . ' changed ticket status from "' . $details['old_status_id'] . '" to "' . $details['new_status_id'] . '"';
                 case 'reordered':
                     return $userName . ' reordered the tickets';
                 default:

@@ -27,8 +27,18 @@ $(document).ready(function() {
                     showFormError($("#createTicketForm"), response.message);
                 }
             },
-            error: function() {
-                showFormError($("#createTicketForm"), "An error occurred. Please try again.");
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", status, error);
+                if (xhr.responseText) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        showFormError($("#createTicketForm"), response.message || "Server error. Please try again.");
+                    } catch(e) {
+                        showFormError($("#createTicketForm"), "An error occurred: " + xhr.responseText);
+                    }
+                } else {
+                    showFormError($("#createTicketForm"), "An error occurred. Please try again.");
+                }
             }
         });
     });
@@ -62,7 +72,8 @@ $(document).ready(function() {
                     showFormError($("#editTicketForm"), response.message);
                 }
             },
-            error: function() {
+            error: function(message) {
+                console.log(message)
                 showFormError($("#editTicketForm"), "An error occurred. Please try again.");
             }
         });
@@ -117,7 +128,7 @@ $(document).ready(function() {
     // Change ticket status
     $(".change-status").click(function() {
         var ticketId = $(this).data("ticket");
-        var status = $(this).data("status");
+        var statusId = $(this).data("status-id");
         
         // Submit status change via AJAX
         $.ajax({
@@ -125,7 +136,7 @@ $(document).ready(function() {
             type: "POST",
             data: {
                 ticket_id: ticketId,
-                status: status
+                status_id: statusId
             },
             dataType: "json",
             success: function(response) {
@@ -136,12 +147,12 @@ $(document).ready(function() {
                     alert(response.message);
                 }
             },
-            error: function() {
-                alert("An error occurred. Please try again.");
+            error: function(response) {
+                alert("An error occurred. Please try again."); 
+                console.log(response)
             }
         });
-    });
-    
+    });    
     // Assign ticket form submission
     $("#assignForm").submit(function(event) {
         event.preventDefault();

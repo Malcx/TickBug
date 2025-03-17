@@ -1,9 +1,6 @@
 <?php
-
-// ------------------------------------------------------------
-
 // api/tickets/reorder.php
-// Reorder tickets API endpoint
+// Enhanced reorder tickets API endpoint that supports priority grouping
 
 // Include helper functions
 require_once '../../includes/helpers.php';
@@ -28,6 +25,7 @@ $userId = getCurrentUserId();
 
 // Get form data
 $deliverableId = isset($_POST['deliverable_id']) ? (int)$_POST['deliverable_id'] : 0;
+$priority = isset($_POST['priority']) ? $_POST['priority'] : '';
 $order = isset($_POST['order']) ? $_POST['order'] : [];
 
 // Validate form data
@@ -44,8 +42,62 @@ if (empty($order) || !is_array($order)) {
 // Convert order values to integers
 $order = array_map('intval', $order);
 
-// Reorder tickets
-$result = reorderTickets($deliverableId, $order, $userId);
+// Get deliverable to check project ID
+$deliverable = getDeliverable($deliverableId);
 
-// Return response
-sendJsonResponse($result);
+if (!$deliverable) {
+    $response = ['success' => false, 'message' => 'Deliverable not found.'];
+    sendJsonResponse($response);
+}
+
+$projectId = $deliverable['project_id'];
+
+// Check if user has permission
+$userRole = getUserProjectRole($userId, $projectId);
+
+if (!$userRole || $userRole === 'Viewer' || $userRole === 'Tester') {
+    $response = ['success' => false, 'message' => 'You do not have permission to reorder tickets.'];
+    sendJsonResponse($response);
+}
+
+// Get database connection
+$conn = getDbConnection();
+
+// Start transaction
+$conn->begin_transaction();
+
+try {
+    foreach ($order as $index => $ticketId) {
+        // Update the display order of this ticket
+        $stmt = $conn->prepare("
+            UPDATE tickets 
+            SET display_order = ?
+            WHERE ticket_id = ? AND deliverable_id = ?
+        ");
+        $stmt->bind_param("iii", $index, $ticketId, $deliverableId);
+        
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to update ticket order: " . $conn->error);
+        }
+    }
+    
+    // Log activity
+    if (LOG_ACTIONS) {
+        logActivity($userId, $projectId, 'ticket', 0, 'reordered', [
+            'deliverable_id' => $deliverableId,
+            'priority' => $priority,
+            'order' => $order
+        ]);
+    }
+    
+    // Commit transaction
+    $conn->commit();
+    
+    $response = ['success' => true, 'message' => 'Tickets reordered successfully.'];
+    sendJsonResponse($response);
+} catch (Exception $e) {
+    // Rollback transaction on error
+    $conn->rollback();
+    $response = ['success' => false, 'message' => $e->getMessage()];
+    sendJsonResponse($response);
+}

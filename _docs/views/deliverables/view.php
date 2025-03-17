@@ -1,6 +1,6 @@
 <?php
 // views/deliverables/view.php
-// Deliverable view page template for viewing tickets within a deliverable - COMPACT VERSION
+// Deliverable view page template with priority-based grouping and enhanced drag-drop
 
 // Get deliverable ID from URL
 $deliverableId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -45,6 +45,48 @@ $additionalScripts = [
 
 // Include header
 require_once ROOT_PATH . '/views/includes/header.php';
+
+// Group tickets by priority
+$priorityGroups = [];
+$priorityOrder = [
+    '1-Critical' => 1,
+    '1-Important' => 2,
+    '2-Nice to have' => 3,
+    '3-Feature Request' => 4,
+    '4-Nice to have' => 5,
+    '6-Not set' => 6
+];
+
+// Initialize priority groups
+foreach ($priorityOrder as $priority => $order) {
+    $priorityGroups[$priority] = [
+        'name' => $priority,
+        'order' => $order,
+        'tickets' => []
+    ];
+}
+
+// Group tickets by priority
+if (!empty($deliverable['tickets'])) {
+    foreach ($deliverable['tickets'] as $ticket) {
+        $priorityName = $ticket['priority_name'];
+        if (isset($priorityGroups[$priorityName])) {
+            $priorityGroups[$priorityName]['tickets'][] = $ticket;
+        } else {
+            // Fallback for any priority not in our predefined list
+            $priorityGroups[$priorityName] = [
+                'name' => $priorityName,
+                'order' => 999, // Put at the end
+                'tickets' => [$ticket]
+            ];
+        }
+    }
+}
+
+// Sort priority groups by order
+uasort($priorityGroups, function($a, $b) {
+    return $a['order'] - $b['order'];
+});
 ?>
 
 <div class="row mb-2">
@@ -132,40 +174,53 @@ require_once ROOT_PATH . '/views/includes/header.php';
                     </div>
                 </div>
                 
-                <!-- Tickets listing -->
+                <!-- Tickets grouped by priority -->
                 <div class="tickets-container">
-                    <h3 class="mb-2">Tickets</h3>
+                    <h3 class="mb-2">Tickets by Priority</h3>
                     
                     <?php if (empty($deliverable['tickets'])): ?>
                         <div class="alert alert-info">No tickets have been added to this deliverable yet.</div>
                     <?php else: ?>
-                        <div class="ticket-list" id="sortable-tickets">
-                            <?php foreach ($deliverable['tickets'] as $ticket): ?>
-                                <div class="card mb-2 ticket-card" 
-                                     data-id="<?php echo $ticket['ticket_id']; ?>" 
-                                     data-status-id="<?php echo $ticket['status_id']; ?>"
-                                     data-status-name="<?php echo $ticket['status_name']; ?>"
-                                     data-priority-id="<?php echo $ticket['priority_id']; ?>"
-                                     data-priority-name="<?php echo $ticket['priority_name']; ?>"
-                                     data-assignee="<?php echo $ticket['assigned_to']; ?>">
-                                    <div class="card-body p-2">
-                                        <h5 class="mb-1">
-                                            <a href="<?php echo BASE_URL; ?>/tickets.php?id=<?php echo $ticket['ticket_id']; ?>" class="text-dark ticket-title">
-                                                <?php echo htmlspecialchars($ticket['title']); ?>
-                                            </a>
-                                        </h5>
-                                        <div class="ticket-meta-inline">
-                                            <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status_name'])); ?>"><?php echo $ticket['status_name']; ?></span>
-                                            <td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority_name'])); ?>"><?php echo $ticket['priority_name']; ?></span></td>
-                                            <?php if (!empty($ticket['assigned_name'])): ?>
-                                                <small class="text-muted ml-2">Assigned: <?php echo htmlspecialchars($ticket['assigned_name']); ?></small>
-                                            <?php else: ?>
-                                                <small class="text-muted ml-2">Unassigned</small>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
+                        <?php foreach ($priorityGroups as $priorityKey => $priorityGroup): ?>
+                            <?php if (empty($priorityGroup['tickets'])) continue; ?>
+                            <div class="priority-group mb-4" data-priority="<?php echo htmlspecialchars($priorityKey); ?>">
+                                <div class="priority-header">
+                                    <span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $priorityKey)); ?>"><?php echo htmlspecialchars($priorityKey); ?></span>
+                                    <span class="ticket-count"><?php echo count($priorityGroup['tickets']); ?> tickets</span>
                                 </div>
-                            <?php endforeach; ?>
+                                <div class="priority-tickets-container sortable-tickets" 
+                                     data-priority="<?php echo htmlspecialchars($priorityKey); ?>"
+                                     data-deliverable-id="<?php echo $deliverableId; ?>">
+                                    <?php foreach ($priorityGroup['tickets'] as $ticket): ?>
+                                        <div class="card mb-2 ticket-card" 
+                                             data-id="<?php echo $ticket['ticket_id']; ?>" 
+                                             data-status="<?php echo htmlspecialchars($ticket['status_name']); ?>"
+                                             data-status-id="<?php echo $ticket['status_id']; ?>"
+                                             data-priority="<?php echo htmlspecialchars($ticket['priority_name']); ?>"
+                                             data-priority-id="<?php echo $ticket['priority_id']; ?>"
+                                             data-assignee="<?php echo $ticket['assigned_to']; ?>">
+                                            <div class="card-body p-2">
+                                                <h5 class="mb-1">
+                                                    <a href="<?php echo BASE_URL; ?>/tickets.php?id=<?php echo $ticket['ticket_id']; ?>" class="text-dark ticket-title">
+                                                        <?php echo htmlspecialchars($ticket['title']); ?>
+                                                    </a>
+                                                </h5>
+                                                <div class="ticket-meta-inline">
+                                                    <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status_name'])); ?>"><?php echo $ticket['status_name']; ?></span>
+                                                    <?php if (!empty($ticket['assigned_name'])): ?>
+                                                        <small class="text-muted ml-2">Assigned: <?php echo htmlspecialchars($ticket['assigned_name']); ?></small>
+                                                    <?php else: ?>
+                                                        <small class="text-muted ml-2">Unassigned</small>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                        <div class="no-tickets-message" style="display: none;">
+                            <div class="alert alert-info">No tickets meet your current filter options</div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -229,8 +284,6 @@ require_once ROOT_PATH . '/views/includes/header.php';
                             <span class="stat-value"><?php echo $completionRate; ?>%</span>
                         </div>
                     </div>
-                    
-
                 </div>
             </div>
         </div>

@@ -362,3 +362,14 @@ label {
   cursor: pointer;
 }
 
+
+
+.activity-timeline{
+  overflow-y: auto;
+  max-height: 500px;
+  font-size:11px;
+}
+
+.activity-item{
+border-bottom:1px solid #ccc;
+}

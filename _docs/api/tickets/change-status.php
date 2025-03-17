@@ -28,7 +28,7 @@ $userId = getCurrentUserId();
 
 // Get form data
 $ticketId = isset($_POST['ticket_id']) ? (int)$_POST['ticket_id'] : 0;
-$status = isset($_POST['status']) ? $_POST['status'] : '';
+$statusId = isset($_POST['status_id']) ? (int)$_POST['status_id'] : 0;
 
 // Validate form data
 if (empty($ticketId)) {
@@ -36,13 +36,13 @@ if (empty($ticketId)) {
     sendJsonResponse($response);
 }
 
-if (empty($status)) {
+if (empty($statusId)) {
     $response = ['success' => false, 'message' => 'Status is required.'];
     sendJsonResponse($response);
 }
 
 // Change ticket status
-$result = changeTicketStatus($ticketId, $status, $userId);
+$result = changeTicketStatus($ticketId, $statusId, $userId);
 
 // Return response
 sendJsonResponse($result);

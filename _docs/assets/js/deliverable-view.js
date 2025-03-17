@@ -1,14 +1,14 @@
 /**
  * assets/js/deliverable-view.js
- * JavaScript for compact deliverable view with sortable tickets and persistent filters
+ * Enhanced JavaScript for the deliverable view with priority grouping and drag-drop
  */
 
 $(document).ready(function() {
+    // Initialize sortable for each priority group
+    initSortable();
+    
     // Initialize ticket filters
     initializeFilters();
-    
-    // Initialize sortable for tickets
-    initSortable();
     
     // Filter tickets by status
     $("#filter-status").change(function() {
@@ -36,17 +36,27 @@ $(document).ready(function() {
 });
 
 /**
- * Initialize sortable functionality for tickets
+ * Initialize sortable functionality for tickets within priority groups
  */
 function initSortable() {
-    $("#sortable-tickets").sortable({
+    $(".sortable-tickets").sortable({
         items: ".ticket-card",
         placeholder: "ui-sortable-placeholder",
-        axis: "y",
+        connectWith: false, // Only allow sorting within the same priority group
         cursor: "grabbing",
         opacity: 0.8,
         update: function(event, ui) {
-            saveTicketOrder();
+            // Get the priority and deliverable ID for this container
+            const priorityGroup = $(this).data("priority");
+            const deliverableId = $(this).data("deliverable-id");
+            
+            // Get all ticket IDs in this container in the new order
+            const ticketIds = $(this).find(".ticket-card").map(function() {
+                return $(this).data("id");
+            }).get();
+            
+            // Save the new order to the database
+            saveTicketOrder(deliverableId, priorityGroup, ticketIds);
         },
         // Prevent click event when sorting ends
         stop: function(event, ui) {
@@ -67,24 +77,23 @@ function initSortable() {
 }
 
 /**
- * Save the new ticket order to the server
+ * Save ticket order to the server
+ * 
+ * @param {number} deliverableId - The ID of the deliverable
+ * @param {string} priorityGroup - The priority group name
+ * @param {Array} ticketIds - Array of ticket IDs in the new order
  */
-function saveTicketOrder() {
-    // Get the ticket IDs in the new order
-    var ticketIds = [];
-    $("#sortable-tickets .ticket-card").each(function() {
-        ticketIds.push($(this).data("id"));
-    });
-    
-    // Show a small notification that order is being saved
+function saveTicketOrder(deliverableId, priorityGroup, ticketIds) {
+    // Show saving notification
     showSavingNotification();
     
-    // Send the new order to the server
+    // Send AJAX request to save the new order
     $.ajax({
         url: baseUrl + "/api/tickets/reorder.php",
         type: "POST",
         data: {
             deliverable_id: deliverableId,
+            priority: priorityGroup,
             order: ticketIds
         },
         dataType: "json",
@@ -219,11 +228,20 @@ function filterTickets() {
     var assignee = $("#filter-assignee").val();
     var search = $("#ticket-search").val().toLowerCase();
     
+    var visibleCount = 0;
+    var visibleByPriority = {};
+    
+    // Initialize priority visibility counter
+    $(".priority-group").each(function() {
+        visibleByPriority[$(this).data("priority")] = 0;
+    });
+    
+    // First, filter all ticket cards
     $(".ticket-card").each(function() {
         var ticketStatus = $(this).data("status");
         var ticketPriority = $(this).data("priority");
         var ticketAssignee = $(this).data("assignee");
-        var ticketTitle = $(this).find("h5").text().toLowerCase();
+        var ticketTitle = $(this).find("h5 a").text().toLowerCase();
         
         // Special handling for "open" and "closed" status filters
         var statusMatch = true;
@@ -250,10 +268,38 @@ function filterTickets() {
         
         var searchMatch = (search === "" || ticketTitle.indexOf(search) > -1);
         
+        // Apply filter to this ticket
         if (statusMatch && priorityMatch && assigneeMatch && searchMatch) {
             $(this).show();
+            visibleCount++;
+            
+            // Increment counter for this priority group
+            var ticketPriorityGroup = $(this).closest(".priority-group").data("priority");
+            visibleByPriority[ticketPriorityGroup]++;
         } else {
             $(this).hide();
         }
     });
+    
+    // Now show/hide priority groups based on whether they have visible tickets
+    $(".priority-group").each(function() {
+        var priorityKey = $(this).data("priority");
+        if (visibleByPriority[priorityKey] > 0) {
+            $(this).show();
+            
+            // Update the ticket count in the header
+            $(this).find(".ticket-count").text(visibleByPriority[priorityKey] + " tickets");
+        } else {
+            $(this).hide();
+        }
+    });
+    
+    // Check if any tickets are visible
+    if (visibleCount === 0) {
+        // Show no tickets message
+        $(".no-tickets-message").show();
+    } else {
+        // Hide the message
+        $(".no-tickets-message").hide();
+    }
 }

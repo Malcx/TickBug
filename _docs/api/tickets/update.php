@@ -119,7 +119,7 @@ if (isset($_FILES['files']) && is_array($_FILES['files']['name'])) {
 }
 
 // Update ticket
-$result = updateTicket($ticketId, $title, $description, $url, $status, $priority, $assignedTo, $userId, $files);
+$result = updateTicket($ticketId, $title, $description, $url, $statusId, $priorityId, $assignedTo, $userId, $files);
 
 // Return response
 sendJsonResponse($result);

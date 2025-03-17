@@ -6,6 +6,9 @@ Create ticket template
 // Set page title
 $pageTitle = 'Create Ticket for ' . $deliverable['name'];
 
+// Get project info for theming
+$project = getProject($deliverable['project_id']);
+
 // Include header
 require_once ROOT_PATH . '/views/includes/header.php';
 ?>
@@ -42,7 +45,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
                     
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea id="description" name="description" rows="5" class="form-control" required></textarea>
+                        <textarea id="description" name="description" rows="5" class="form-control"></textarea>
                     </div>
                     
                     <div class="form-group">
