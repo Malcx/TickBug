@@ -155,10 +155,14 @@ function getDeliverableTickets($deliverableId) {
                creator.first_name as creator_first_name, 
                creator.last_name as creator_last_name,
                assignee.first_name as assignee_first_name, 
-               assignee.last_name as assignee_last_name
+               assignee.last_name as assignee_last_name,
+               s.name as status_name,
+               p.name as priority_name
         FROM tickets t
         JOIN users creator ON t.created_by = creator.user_id
         LEFT JOIN users assignee ON t.assigned_to = assignee.user_id
+        LEFT JOIN statuses s ON t.status_id = s.status_id
+        LEFT JOIN priorities p ON t.priority_id = p.priority_id
         WHERE t.deliverable_id = ?
         ORDER BY t.display_order
     ");

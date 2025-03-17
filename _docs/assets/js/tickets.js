@@ -392,8 +392,8 @@ function filterTickets() {
     var search = $("#ticket-search").val().toLowerCase();
     
     $(".ticket-card").each(function() {
-        var ticketStatus = $(this).data("status");
-        var ticketPriority = $(this).data("priority");
+        var ticketStatus = $(this).data("status-id");
+        var ticketPriorityId = $(this).data("priority-id");
         var ticketAssignee = $(this).data("assignee");
         var ticketTitle = $(this).find("h5 a").text().toLowerCase();
         

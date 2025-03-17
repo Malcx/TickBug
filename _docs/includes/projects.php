@@ -188,7 +188,7 @@ function getProjectStatistics($projectId) {
         SELECT COUNT(*) as open
         FROM tickets t
         JOIN deliverables d ON t.deliverable_id = d.deliverable_id
-        WHERE d.project_id = ? AND t.status NOT IN ('Complete', 'Rejected', 'Ignored')
+        WHERE d.project_id = ? AND t.status_id NOT IN (6, 7, 8)
     ");
     $stmt->bind_param("i", $projectId);
     $stmt->execute();
@@ -201,7 +201,7 @@ function getProjectStatistics($projectId) {
         SELECT COUNT(*) as completed
         FROM tickets t
         JOIN deliverables d ON t.deliverable_id = d.deliverable_id
-        WHERE d.project_id = ? AND t.status = 'Complete'
+        WHERE d.project_id = ? AND t.status_id = 6
     ");
     $stmt->bind_param("i", $projectId);
     $stmt->execute();

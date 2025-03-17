@@ -25,7 +25,7 @@ foreach ($deliverables as $deliverable) {
     if (isset($deliverable['tickets'])) {
         $totalTickets += count($deliverable['tickets']);
         foreach ($deliverable['tickets'] as $ticket) {
-            if ($ticket['status'] !== 'Complete' && $ticket['status'] !== 'Rejected' && $ticket['status'] !== 'Ignored') {
+            if ($ticket['status_id'] != 6 && $ticket['status_id'] != 7 && $ticket['status_id'] != 8) {
                 $openTickets++;
             }
         }
@@ -70,7 +70,7 @@ foreach ($deliverables as $deliverable) {
                     $openTickets = 0;
                     
                     foreach ($deliverable['tickets'] as $ticket) {
-                        if ($ticket['status'] !== 'Complete' && $ticket['status'] !== 'Rejected' && $ticket['status'] !== 'Ignored') {
+                        if ($ticket['status_id'] != 6 && $ticket['status_id'] != 7 && $ticket['status_id'] != 8) {
                             $openTickets++;
                         }
                     }

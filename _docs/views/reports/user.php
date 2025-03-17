@@ -150,8 +150,8 @@ require_once ROOT_PATH . '/views/includes/header.php';
                                     <td>#<?php echo $ticket['ticket_id']; ?></td>
                                     <td><?php echo htmlspecialchars($ticket['title']); ?></td>
                                     <td><?php echo htmlspecialchars($ticket['project_name']); ?></td>
-                                    <td><span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status'])); ?>"><?php echo $ticket['status']; ?></span></td>
-                                    <td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority'])); ?>"><?php echo $ticket['priority']; ?></span></td>
+                                    <td><span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status_name'])); ?>"><?php echo $ticket['status_name']; ?></span></td>
+                                    <td><td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority_name'])); ?>"><?php echo $ticket['priority_name']; ?></span></td></td>
                                     <td><?php echo formatDate($ticket['created_at'], 'M j, Y'); ?></td>
                                     <td>
                                         <a href="<?php echo BASE_URL; ?>/tickets.php?id=<?php echo $ticket['ticket_id']; ?>" class="btn btn-sm btn-primary">View</a>
@@ -199,7 +199,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
                                     <td>#<?php echo $ticket['ticket_id']; ?></td>
                                     <td><?php echo htmlspecialchars($ticket['title']); ?></td>
                                     <td><?php echo htmlspecialchars($ticket['project_name']); ?></td>
-                                    <td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority'])); ?>"><?php echo $ticket['priority']; ?></span></td>
+                                    <td><td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority_name'])); ?>"><?php echo $ticket['priority_name']; ?></span></td></td>
                                     <td><?php echo formatDate($ticket['updated_at'], 'M j, Y'); ?></td>
                                     <td>
                                         <a href="<?php echo BASE_URL; ?>/tickets.php?id=<?php echo $ticket['ticket_id']; ?>" class="btn btn-sm btn-primary">View</a>

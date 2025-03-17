@@ -57,22 +57,27 @@
   background-color: var(--priority-1-critical);
 }
 
-.badge-priority-1-important {
+.badge-priority-2-important {
   color: #fff;
-  background-color: var(--priority-1-important);
+  background-color: var(--priority-2-important);
 }
 
-.badge-priority-2-nice-to-have {
+.badge-priority-3-nice-to-have {
   color: #fff;
-  background-color: var(--priority-2-nice-to-have);
+  background-color: var(--priority-3-nice-to-have);
 }
 
-.badge-priority-3-feature-request {
+.badge-priority-4-feature-request {
   color: #fff;
-  background-color: var(--priority-3-feature-request);
+  background-color: var(--priority-4-feature-request);
 }
 
-.badge-priority-4-nice-to-have {
+.badge-priority-5-cosmetic {
   color: #fff;
-  background-color: var(--priority-4-nice-to-have);
+  background-color: var(--priority-5-cosmetic);
+}
+
+.badge-priority-6-not-set {
+  color: #fff;
+  background-color: var(--priority-6-not-set);
 }

@@ -23,12 +23,13 @@
   --status-rejected: #dc3545;
   --status-ignored: #6c757d;
   
-  /* Priority colors */
-  --priority-1-critical: #dc3545;
-  --priority-1-important: #fd7e14;
-  --priority-2-nice-to-have: #28a745;
-  --priority-3-feature-request: #17a2b8;
-  --priority-4-nice-to-have: #6c757d;
+/* Priority colors */
+--priority-1-critical: #dc3545;
+--priority-2-important: #fd7e14;
+--priority-3-nice-to-have: #28a745;
+--priority-4-feature-request: #17a2b8;
+--priority-5-cosmetic: #6c757d;
+--priority-6-not-set: #6c757d;
   
   /* Spacing */
   --spacing-xs: 4px;

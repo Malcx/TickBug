@@ -31,8 +31,8 @@ $ticketId = isset($_POST['ticket_id']) ? (int)$_POST['ticket_id'] : 0;
 $title = isset($_POST['title']) ? trim($_POST['title']) : '';
 $description = isset($_POST['description']) ? trim($_POST['description']) : '';
 $url = isset($_POST['url']) ? trim($_POST['url']) : '';
-$status = isset($_POST['status']) ? $_POST['status'] : '';
-$priority = isset($_POST['priority']) ? $_POST['priority'] : '';
+$statusId = isset($_POST['status_id']) ? (int)$_POST['status_id'] : 0;
+$priorityId = isset($_POST['priority_id']) ? (int)$_POST['priority_id'] : 0;
 $assignedTo = isset($_POST['assigned_to']) && !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
 
 // Check for move action (change deliverable)

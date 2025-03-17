@@ -54,28 +54,29 @@ require_once ROOT_PATH . '/views/includes/header.php';
                     </div>
                     
                     <div class="form-group">
-                        <label for="priority">Priority</label>
-                        <select id="priority" name="priority" class="form-control" required>
-                            <option value="1-Critical" <?php echo ($ticket['priority'] === '1-Critical') ? 'selected' : ''; ?>>1-Critical</option>
-                            <option value="1-Important" <?php echo ($ticket['priority'] === '1-Important') ? 'selected' : ''; ?>>1-Important</option>
-                            <option value="2-Nice to have" <?php echo ($ticket['priority'] === '2-Nice to have') ? 'selected' : ''; ?>>2-Nice to have</option>
-                            <option value="3-Feature Request" <?php echo ($ticket['priority'] === '3-Feature Request') ? 'selected' : ''; ?>>3-Feature Request</option>
-                            <option value="4-Nice to have" <?php echo ($ticket['priority'] === '4-Nice to have') ? 'selected' : ''; ?>>4-Nice to have</option>
+                        <label for="priority_id">Priority</label>
+                        <select id="priority_id" name="priority_id" class="form-control" required>
+                            <option value="1" <?php echo ($ticket['priority_id'] == 1) ? 'selected' : ''; ?>>1 - Critical</option>
+                            <option value="2" <?php echo ($ticket['priority_id'] == 2) ? 'selected' : ''; ?>>2 - Important</option>
+                            <option value="3" <?php echo ($ticket['priority_id'] == 3) ? 'selected' : ''; ?>>3 - Nice to have</option>
+                            <option value="4" <?php echo ($ticket['priority_id'] == 4) ? 'selected' : ''; ?>>4 - Feature request</option>
+                            <option value="5" <?php echo ($ticket['priority_id'] == 5) ? 'selected' : ''; ?>>5 - Cosmetic</option>
+                            <option value="6" <?php echo ($ticket['priority_id'] == 6) ? 'selected' : ''; ?>>6 - Not set</option>
                         </select>
                     </div>
                     
                     <?php if ($userRole !== 'Tester'): ?>
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" name="status" class="form-control" required>
-                            <option value="New" <?php echo ($ticket['status'] === 'New') ? 'selected' : ''; ?>>New</option>
-                            <option value="Needs clarification" <?php echo ($ticket['status'] === 'Needs clarification') ? 'selected' : ''; ?>>Needs clarification</option>
-                            <option value="Assigned" <?php echo ($ticket['status'] === 'Assigned') ? 'selected' : ''; ?>>Assigned</option>
-                            <option value="In progress" <?php echo ($ticket['status'] === 'In progress') ? 'selected' : ''; ?>>In progress</option>
-                            <option value="In review" <?php echo ($ticket['status'] === 'In review') ? 'selected' : ''; ?>>In review</option>
-                            <option value="Complete" <?php echo ($ticket['status'] === 'Complete') ? 'selected' : ''; ?>>Complete</option>
-                            <option value="Rejected" <?php echo ($ticket['status'] === 'Rejected') ? 'selected' : ''; ?>>Rejected</option>
-                            <option value="Ignored" <?php echo ($ticket['status'] === 'Ignored') ? 'selected' : ''; ?>>Ignored</option>
+                        <label for="status_id">Status</label>
+                        <select id="status_id" name="status_id" class="form-control" required>
+                            <option value="1" <?php echo ($ticket['status_id'] == 1) ? 'selected' : ''; ?>>New</option>
+                            <option value="2" <?php echo ($ticket['status_id'] == 2) ? 'selected' : ''; ?>>Needs clarification</option>
+                            <option value="3" <?php echo ($ticket['status_id'] == 3) ? 'selected' : ''; ?>>Assigned</option>
+                            <option value="4" <?php echo ($ticket['status_id'] == 4) ? 'selected' : ''; ?>>In progress</option>
+                            <option value="5" <?php echo ($ticket['status_id'] == 5) ? 'selected' : ''; ?>>In review</option>
+                            <option value="6" <?php echo ($ticket['status_id'] == 6) ? 'selected' : ''; ?>>Complete</option>
+                            <option value="7" <?php echo ($ticket['status_id'] == 7) ? 'selected' : ''; ?>>Rejected</option>
+                            <option value="8" <?php echo ($ticket['status_id'] == 8) ? 'selected' : ''; ?>>Ignored</option>
                         </select>
                     </div>
                     

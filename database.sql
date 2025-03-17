@@ -119,6 +119,31 @@ CREATE TABLE IF NOT EXISTS `files` (
   KEY `uploaded_by` (`uploaded_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+--
+-- Table structure for table `priorities`
+--
+
+DROP TABLE IF EXISTS `priorities`;
+CREATE TABLE IF NOT EXISTS `priorities` (
+  `priority_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`priority_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `priorities`
+--
+
+INSERT INTO `priorities` (`priority_id`, `name`) VALUES
+(1, '1 - Critical'),
+(2, '2 - Important'),
+(3, '3 - Nice to have'),
+(4, '4 - Feature request'),
+(5, '5 - Cosmetic'),
+(6, '6 - Not set');
+
+
 -- --------------------------------------------------------
 
 --
@@ -159,6 +184,33 @@ CREATE TABLE IF NOT EXISTS `project_users` (
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+--
+-- Table structure for table `statuses`
+--
+
+DROP TABLE IF EXISTS `statuses`;
+CREATE TABLE IF NOT EXISTS `statuses` (
+  `status_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`status_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `statuses`
+--
+
+INSERT INTO `statuses` (`status_id`, `name`) VALUES
+(1, 'New'),
+(2, 'Needs clarification'),
+(3, 'Assigned'),
+(4, 'In progress'),
+(5, 'In review'),
+(6, 'Complete'),
+(7, 'Rejected'),
+(8, 'Ignored');
+
+
 -- --------------------------------------------------------
 
 --
@@ -172,8 +224,8 @@ CREATE TABLE IF NOT EXISTS `tickets` (
   `title` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `url` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `status` enum('New','Needs clarification','Assigned','In progress','In review','Complete','Rejected','Ignored') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'New',
-  `priority` enum('1-Critical','1-Important','2-Nice to have','3-Feature Request','4-Nice to have') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `status_id` int NOT NULL DEFAULT '1',
+  `priority_id` int NOT NULL DEFAULT '6',
   `assigned_to` int DEFAULT NULL,
   `created_by` int NOT NULL,
   `display_order` int NOT NULL DEFAULT '0',
@@ -282,13 +334,17 @@ ALTER TABLE `tickets`
   ADD CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`deliverable_id`) REFERENCES `deliverables` (`deliverable_id`),
   ADD CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`user_id`),
   ADD CONSTRAINT `tickets_ibfk_3` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
-
+  ADD CONSTRAINT `tickets_ibfk_4` FOREIGN KEY (`priority_id`) REFERENCES `priorities` (`priority_id`);
+  ADD CONSTRAINT `tickets_ibfk_5` FOREIGN KEY (`status_id`) REFERENCES `statuses` (`status_id`);
 --
 -- Constraints for table `ticket_files`
 --
 ALTER TABLE `ticket_files`
   ADD CONSTRAINT `ticket_files_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`ticket_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `ticket_files_ibfk_2` FOREIGN KEY (`file_id`) REFERENCES `files` (`file_id`) ON DELETE CASCADE;
+
+
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

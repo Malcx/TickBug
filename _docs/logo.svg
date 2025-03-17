@@ -5,7 +5,7 @@
   <!-- Background circle -->
   <circle cx="50" cy="50" r="46" fill="#4CAF50" />
   
-  <!-- Bug body (dark gray) -->
+  <!-- Bug body -->
   <ellipse cx="50" cy="53" rx="18" ry="22" fill="#333333" />
   
   <!-- Bug head -->
@@ -16,17 +16,17 @@
   <circle cx="55" cy="27" r="3" fill="white" />
   
   <!-- Antennae -->
-  <path d="M40 22 C35 15, 30 15, 25 18" stroke="#333333" stroke-width="2" fill="none" />
-  <path d="M60 22 C65 15, 70 15, 75 18" stroke="#333333" stroke-width="2" fill="none" />
+  <path d="M40 22 C35 15, 30 15, 25 18" stroke="#333333" stroke-width="4" fill="none" />
+  <path d="M60 22 C65 15, 70 15, 75 18" stroke="#333333" stroke-width="4" fill="none" />
   
   <!-- Legs -->
-  <path d="M35 45 C25 45, 20 35, 15 38" stroke="#333333" stroke-width="2" fill="none" />
-  <path d="M65 45 C75 45, 80 35, 85 38" stroke="#333333" stroke-width="2" fill="none" />
-  <path d="M35 55 C25 55, 20 50, 15 55" stroke="#333333" stroke-width="2" fill="none" />
-  <path d="M65 55 C75 55, 80 50, 85 55" stroke="#333333" stroke-width="2" fill="none" />
-  <path d="M35 65 C25 65, 20 70, 15 75" stroke="#333333" stroke-width="2" fill="none" />
-  <path d="M65 65 C75 65, 80 70, 85 75" stroke="#333333" stroke-width="2" fill="none" />
+  <path d="M35 45 C25 45, 20 35, 15 38" stroke="#333333" stroke-width="5" fill="none" />
+  <path d="M65 45 C75 45, 80 35, 85 38" stroke="#333333" stroke-width="5" fill="none" />
+  <path d="M35 55 C25 55, 20 50, 15 55" stroke="#333333" stroke-width="5" fill="none" />
+  <path d="M65 55 C75 55, 80 50, 85 55" stroke="#333333" stroke-width="5" fill="none" />
+  <path d="M37 65 C25 65, 20 70, 15 75" stroke="#333333" stroke-width="5" fill="none" />
+  <path d="M63 65 C75 65, 80 70, 85 75" stroke="#333333" stroke-width="5" fill="none" />
   
-  <!-- Tick/Checkmark overlay -->
+  <!-- Tick overlay -->
   <path d="M30 50 L45 65 L70 35" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none" />
 </svg>

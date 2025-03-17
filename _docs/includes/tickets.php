@@ -16,7 +16,7 @@
  * @param array $files Array of uploaded files (optional)
  * @return array Response with status and ticket data
  */
-function createTicket($deliverableId, $title, $description, $url, $status, $priority, $assignedTo, $userId, $files = []) {
+function createTicket($deliverableId, $title, $description, $url, $statusId, $priorityId, $assignedTo, $userId, $files = []) {
     $conn = getDbConnection();
     
     // Validate input
@@ -68,13 +68,13 @@ function createTicket($deliverableId, $title, $description, $url, $status, $prio
         // Insert ticket
         $stmt = $conn->prepare("
             INSERT INTO tickets (
-                deliverable_id, title, description, url, status, priority, 
+                deliverable_id, title, description, url, status_id, priority_id, 
                 assigned_to, created_by, display_order
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->bind_param(
-            "isssssiis", 
-            $deliverableId, $title, $description, $url, $status, $priority,
+            "isssiiiis", 
+            $deliverableId, $title, $description, $url, $statusId, $priorityId,
             $assignedTo, $userId, $displayOrder
         );
         
@@ -110,8 +110,8 @@ function createTicket($deliverableId, $title, $description, $url, $status, $prio
         if (LOG_ACTIONS) {
             logActivity($userId, $projectId, 'ticket', $ticketId, 'created', [
                 'title' => $title,
-                'status' => $status,
-                'priority' => $priority,
+                'status_id' => $statusId,
+                'priority_id' => $priorityId,
                 'assigned_to' => $assignedTo
             ]);
         }
@@ -186,11 +186,15 @@ function getTicket($ticketId) {
                creator.first_name as creator_first_name, 
                creator.last_name as creator_last_name,
                assignee.first_name as assignee_first_name, 
-               assignee.last_name as assignee_last_name
+               assignee.last_name as assignee_last_name,
+               p.name as priority_name,
+               s.name as status_name
         FROM tickets t
         JOIN deliverables d ON t.deliverable_id = d.deliverable_id
         JOIN users creator ON t.created_by = creator.user_id
         LEFT JOIN users assignee ON t.assigned_to = assignee.user_id
+        LEFT JOIN priorities p ON t.priority_id = p.priority_id
+        LEFT JOIN statuses s ON t.status_id = s.status_id
         WHERE t.ticket_id = ?
     ");
     $stmt->bind_param("i", $ticketId);
@@ -322,7 +326,7 @@ function getCommentFiles($commentId) {
  * @param array $files Array of new uploaded files (optional)
  * @return array Response with status and message
  */
-function updateTicket($ticketId, $title, $description, $url, $status, $priority, $assignedTo, $userId, $files = []) {
+function updateTicket($ticketId, $title, $description, $url, $status, $priorityId, $assignedTo, $userId, $files = []) {
     $conn = getDbConnection();
     
     // Validate input
@@ -364,12 +368,12 @@ function updateTicket($ticketId, $title, $description, $url, $status, $priority,
         // Update ticket
         $stmt = $conn->prepare("
             UPDATE tickets 
-            SET title = ?, description = ?, url = ?, status = ?, priority = ?, assigned_to = ?
+            SET title = ?, description = ?, url = ?, status_id = ?, priority_id = ?, assigned_to = ?
             WHERE ticket_id = ?
         ");
         $stmt->bind_param(
-            "sssssii", 
-            $title, $description, $url, $status, $priority, $assignedTo, $ticketId
+            "sssiiii", 
+            $title, $description, $url, $statusId, $priorityId, $assignedTo, $ticketId
         );
         
         if (!$stmt->execute()) {
@@ -399,8 +403,8 @@ function updateTicket($ticketId, $title, $description, $url, $status, $priority,
         if (LOG_ACTIONS) {
             $changes = [
                 'title' => $title !== $ticket['title'] ? ['old' => $ticket['title'], 'new' => $title] : null,
-                'status' => $status !== $ticket['status'] ? ['old' => $ticket['status'], 'new' => $status] : null,
-                'priority' => $priority !== $ticket['priority'] ? ['old' => $ticket['priority'], 'new' => $priority] : null,
+                'status_id' => $statusId !== $ticket['status_id'] ? ['old' => $ticket['status_id'], 'new' => $statusId] : null,
+                'priority_id' => $priorityId !== $ticket['priority_id'] ? ['old' => $ticket['priority_id'], 'new' => $priorityId] : null,
                 'assigned_to' => $assignedTo !== $ticket['assigned_to'] ? ['old' => $ticket['assigned_to'], 'new' => $assignedTo] : null
             ];
             
@@ -688,12 +692,11 @@ function assignTicket($ticketId, $assignedTo, $userId) {
  * @param int $userId User ID making the change
  * @return array Response with status and message
  */
-function changeTicketStatus($ticketId, $status, $userId) {
+function changeTicketStatus($ticketId, $statusId, $userId) {
     $conn = getDbConnection();
     
-    // Validate status
-    $validStatuses = ['New', 'Needs clarification', 'Assigned', 'In progress', 'In review', 'Complete', 'Rejected', 'Ignored'];
-    if (!in_array($status, $validStatuses)) {
+    // Validate status ID
+    if ($statusId < 1 || $statusId > 8) {
         return ['success' => false, 'message' => 'Invalid status.'];
     }
     
@@ -715,15 +718,15 @@ function changeTicketStatus($ticketId, $status, $userId) {
     }
     
     // Update ticket
-    $stmt = $conn->prepare("UPDATE tickets SET status = ? WHERE ticket_id = ?");
-    $stmt->bind_param("si", $status, $ticketId);
+    $stmt = $conn->prepare("UPDATE tickets SET status_id = ? WHERE ticket_id = ?");
+    $stmt->bind_param("ii", $statusId, $ticketId);
     
     if ($stmt->execute()) {
         // Log activity
         if (LOG_ACTIONS) {
-            logActivity($userId, $projectId, 'ticket', $ticketId, 'status_changed', [
-                'old_status' => $oldStatus,
-                'new_status' => $status
+           logActivity($userId, $projectId, 'ticket', $ticketId, 'status_changed', [
+               'old_status_id' => $oldStatus,
+               'new_status_id' => $statusId
             ]);
         }
         

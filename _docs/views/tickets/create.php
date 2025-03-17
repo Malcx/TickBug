@@ -51,28 +51,29 @@ require_once ROOT_PATH . '/views/includes/header.php';
                     </div>
                     
                     <div class="form-group">
-                        <label for="priority">Priority</label>
-                        <select id="priority" name="priority" class="form-control" required>
-                            <option value="1-Critical">1-Critical</option>
-                            <option value="1-Important">1-Important</option>
-                            <option value="2-Nice to have" selected>2-Nice to have</option>
-                            <option value="3-Feature Request">3-Feature Request</option>
-                            <option value="4-Nice to have">4-Nice to have</option>
+                        <label for="priority_id">Priority</label>
+                        <select id="priority_id" name="priority_id" class="form-control" required>
+                            <option value="1">1 - Critical</option>
+                            <option value="2">2 - Important</option>
+                            <option value="3" selected>3 - Nice to have</option>
+                            <option value="4">4 - Feature request</option>
+                            <option value="5">5 - Cosmetic</option>
+                            <option value="6">6 - Not set</option>
                         </select>
                     </div>
                     
                     <?php if ($userRole !== 'Tester'): ?>
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" name="status" class="form-control" required>
-                            <option value="New" selected>New</option>
-                            <option value="Needs clarification">Needs clarification</option>
-                            <option value="Assigned">Assigned</option>
-                            <option value="In progress">In progress</option>
-                            <option value="In review">In review</option>
-                            <option value="Complete">Complete</option>
-                            <option value="Rejected">Rejected</option>
-                            <option value="Ignored">Ignored</option>
+                        <label for="status_id">Status</label>
+                        <select id="status_id" name="status_id" class="form-control" required>
+                            <option value="1" selected>New</option>
+                            <option value="2">Needs clarification</option>
+                            <option value="3">Assigned</option>
+                            <option value="4">In progress</option>
+                            <option value="5">In review</option>
+                            <option value="6">Complete</option>
+                            <option value="7">Rejected</option>
+                            <option value="8">Ignored</option>
                         </select>
                     </div>
                     

@@ -29,8 +29,8 @@ $deliverableId = isset($_POST['deliverable_id']) ? (int)$_POST['deliverable_id']
 $title = isset($_POST['title']) ? trim($_POST['title']) : '';
 $description = isset($_POST['description']) ? trim($_POST['description']) : '';
 $url = isset($_POST['url']) ? trim($_POST['url']) : '';
-$status = isset($_POST['status']) ? $_POST['status'] : 'New';
-$priority = isset($_POST['priority']) ? $_POST['priority'] : '2-Nice to have';
+$statusId = isset($_POST['status_id']) ? (int)$_POST['status_id'] : 1; // Default to "New"
+$priorityId = isset($_POST['priority_id']) ? (int)$_POST['priority_id'] : 3; // Default to "3 - Nice to have"
 $assignedTo = isset($_POST['assigned_to']) && !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
 
 // Validate form data

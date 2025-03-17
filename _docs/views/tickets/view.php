@@ -47,10 +47,10 @@ require_once ROOT_PATH . '/views/includes/header.php';
                 <!-- Ticket details -->
                 <div class="row mb-3">
                     <div class="col-4">
-                        <p><strong>Status:</strong> <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status'])); ?>"><?php echo $ticket['status']; ?></span></p>
+                        <p><strong>Status:</strong> <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status_name'])); ?>"><?php echo $ticket['status_name']; ?></span></p>
                     </div>
                     <div class="col-4">
-                        <p><strong>Priority:</strong> <span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority'])); ?>"><?php echo $ticket['priority']; ?></span></p>
+                        <p><strong>Priority:</strong> <span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority_name'])); ?>"><?php echo $ticket['priority_name']; ?></span></p>
                     </div>
                     <div class="col-4">
                         <p><strong>Created by:</strong> <?php echo htmlspecialchars($ticket['creator_first_name'] . ' ' . $ticket['creator_last_name']); ?></p>
@@ -230,12 +230,21 @@ require_once ROOT_PATH . '/views/includes/header.php';
                         <h4>Change Status</h4>
                         <div class="status-buttons">
                             <?php
-                            $statuses = ['New', 'Needs clarification', 'Assigned', 'In progress', 'In review', 'Complete', 'Rejected', 'Ignored'];
-                            foreach ($statuses as $status):
-                                $statusClass = strtolower(str_replace(' ', '-', $status));
-                                $disabled = ($status === $ticket['status']) ? 'disabled' : '';
+                            $statuses = [
+                                1 => 'New',
+                                2 => 'Needs clarification',
+                                3 => 'Assigned',
+                                4 => 'In progress',
+                                5 => 'In review',
+                                6 => 'Complete',
+                                7 => 'Rejected',
+                                8 => 'Ignored'
+                            ];
+                            foreach ($statuses as $statusId => $statusName):
+                                $statusClass = strtolower(str_replace(' ', '-', $statusName));
+                                $disabled = ($statusId == $ticket['status_id']) ? 'disabled' : '';
                             ?>
-                            <button class="btn btn-sm mb-2 badge-<?php echo $statusClass; ?> change-status" data-status="<?php echo $status; ?>" data-ticket="<?php echo $ticket['ticket_id']; ?>" <?php echo $disabled; ?>><?php echo $status; ?></button>
+                            <button class="btn btn-sm mb-2 badge-<?php echo $statusClass; ?> change-status" data-status-id="<?php echo $statusId; ?>" data-ticket="<?php echo $ticket['ticket_id']; ?>" <?php echo $disabled; ?>><?php echo $statusName; ?></button>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -260,7 +269,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
                 <?php else: ?>
                     <div class="mb-3">
                         <h4>Status</h4>
-                        <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status'])); ?>"><?php echo $ticket['status']; ?></span>
+                        <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status_name'])); ?>"><?php echo $ticket['status_name']; ?></span>
                     </div>
                     
                     <div class="mb-3">

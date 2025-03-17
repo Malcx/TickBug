@@ -143,8 +143,10 @@ require_once ROOT_PATH . '/views/includes/header.php';
                             <?php foreach ($deliverable['tickets'] as $ticket): ?>
                                 <div class="card mb-2 ticket-card" 
                                      data-id="<?php echo $ticket['ticket_id']; ?>" 
-                                     data-status="<?php echo $ticket['status']; ?>" 
-                                     data-priority="<?php echo $ticket['priority']; ?>" 
+                                     data-status-id="<?php echo $ticket['status_id']; ?>"
+                                     data-status-name="<?php echo $ticket['status_name']; ?>"
+                                     data-priority-id="<?php echo $ticket['priority_id']; ?>"
+                                     data-priority-name="<?php echo $ticket['priority_name']; ?>"
                                      data-assignee="<?php echo $ticket['assigned_to']; ?>">
                                     <div class="card-body p-2">
                                         <h5 class="mb-1">
@@ -153,8 +155,8 @@ require_once ROOT_PATH . '/views/includes/header.php';
                                             </a>
                                         </h5>
                                         <div class="ticket-meta-inline">
-                                            <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status'])); ?>"><?php echo $ticket['status']; ?></span>
-                                            <span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority'])); ?>"><?php echo $ticket['priority']; ?></span>
+                                            <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status_name'])); ?>"><?php echo $ticket['status_name']; ?></span>
+                                            <td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority_name'])); ?>"><?php echo $ticket['priority_name']; ?></span></td>
                                             <?php if (!empty($ticket['assigned_name'])): ?>
                                                 <small class="text-muted ml-2">Assigned: <?php echo htmlspecialchars($ticket['assigned_name']); ?></small>
                                             <?php else: ?>
@@ -192,9 +194,9 @@ require_once ROOT_PATH . '/views/includes/header.php';
                 $completeTickets = 0;
                 
                 foreach ($deliverable['tickets'] as $ticket) {
-                    if ($ticket['status'] === 'Complete') {
+                    if ($ticket['status_id'] === 6) {
                         $completeTickets++;
-                    } elseif ($ticket['status'] !== 'Rejected' && $ticket['status'] !== 'Ignored') {
+                    } elseif ($ticket['status_id'] !== 7 && $ticket['status_id'] !== 8) {
                         $openTickets++;
                     }
                 }

@@ -61,8 +61,8 @@ $createdTickets = getUserCreatedTickets($userId);
                                 <td>#<?php echo $ticket['ticket_id']; ?></td>
                                 <td><a href="<?php echo BASE_URL; ?>/tickets.php?id=<?php echo $ticket['ticket_id']; ?>"><?php echo htmlspecialchars($ticket['title']); ?></a></td>
                                 <td><a href="<?php echo BASE_URL; ?>/projects.php?id=<?php echo $ticket['project_id']; ?>"><?php echo htmlspecialchars($ticket['project_name']); ?></a></td>
-                                <td><span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status'])); ?>"><?php echo $ticket['status']; ?></span></td>
-                                <td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority'])); ?>"><?php echo $ticket['priority']; ?></span></td>
+                                <td><span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status_name'])); ?>"><?php echo $ticket['status_name']; ?></span></td>
+                                <td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority_name'])); ?>"><?php echo $ticket['priority_name']; ?></span></td>
                                 <td><?php echo formatDate($ticket['created_at'], 'M j, Y'); ?></td>
                                 <td>
                                     <a href="<?php echo BASE_URL; ?>/tickets.php?id=<?php echo $ticket['ticket_id']; ?>" class="btn btn-sm btn-primary">View</a>
@@ -103,8 +103,8 @@ $createdTickets = getUserCreatedTickets($userId);
                                 <td>#<?php echo $ticket['ticket_id']; ?></td>
                                 <td><a href="<?php echo BASE_URL; ?>/tickets.php?id=<?php echo $ticket['ticket_id']; ?>"><?php echo htmlspecialchars($ticket['title']); ?></a></td>
                                 <td><a href="<?php echo BASE_URL; ?>/projects.php?id=<?php echo $ticket['project_id']; ?>"><?php echo htmlspecialchars($ticket['project_name']); ?></a></td>
-                                <td><span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status'])); ?>"><?php echo $ticket['status']; ?></span></td>
-                                <td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority'])); ?>"><?php echo $ticket['priority']; ?></span></td>
+                                <td><span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $ticket['status_name'])); ?>"><?php echo $ticket['status_name']; ?></span></td>
+                                <td><td><span class="badge badge-priority-<?php echo strtolower(str_replace(' ', '-', $ticket['priority_name'])); ?>"><?php echo $ticket['priority_name']; ?></span></td></td>
                                 <td><?php echo !empty($ticket['assigned_name']) ? htmlspecialchars($ticket['assigned_name']) : '<em>Unassigned</em>'; ?></td>
                                 <td><?php echo formatDate($ticket['created_at'], 'M j, Y'); ?></td>
                                 <td>
