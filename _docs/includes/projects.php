@@ -19,9 +19,9 @@ function createProject($name, $description, $themeColor, $userId) {
         return ['success' => false, 'message' => 'Project name is required.'];
     }
     
-    // Validate color format (should be a hex color like #201E5B)
+    // Validate color format (should be a hex color like #20205E)
     if (!preg_match('/^#[a-fA-F0-9]{6}$/', $themeColor)) {
-        $themeColor = '#201E5B'; // Use default if invalid
+        $themeColor = '#20205E'; // Use default if invalid
     }
     
     // Start transaction
@@ -234,9 +234,9 @@ function updateProject($projectId, $name, $description, $themeColor, $userId) {
         return ['success' => false, 'message' => 'Project name is required.'];
     }
     
-    // Validate color format (should be a hex color like #201E5B)
+    // Validate color format (should be a hex color like #20205E)
     if (!preg_match('/^#[a-fA-F0-9]{6}$/', $themeColor)) {
-        $themeColor = '#201E5B'; // Use default if invalid
+        $themeColor = '#20205E'; // Use default if invalid
     }
     
     // Check if user has permission to update project

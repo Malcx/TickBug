@@ -1,9 +1,11 @@
 /* assets/css/vars.css */
 :root {
   --white: #EEE;
+  --lightest: #D1CDE6;
   --light: #C1BDD6;
-  --dark: #201E5B;
+  --dark: #20205E;
   --darker: #131857;
+  --darkest: #050620;
   --error: #d42d00;
   
   /* Additional functional colors */

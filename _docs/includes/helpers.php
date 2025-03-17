@@ -310,20 +310,32 @@ function generateThemeColors($hexColor) {
     
     // Create darker shade (reduce lightness)
     $darker_l = max($l - 0.15, 0.1);
+
+    // Create darkest shade (reduce lightness)
+    $darker_l2 = max($l - 0.25, 0.2);
     
     // Create lighter shade
     $lighter_l = min(0.85, $l + 0.4); // much lighter
     $lighter_s = max(0.1, $s - 0.2);  // less saturated
+
+    // Create lightest shade
+    $lighter_l2 = min(0.95, $l + 0.6); // much lighter
+    $lighter_s2 = max(0.2, $s - 0.4);  // less saturated
     
     // Convert back to hex
     $dark = $hexColor;
     $darker = hslToHex($h, $s, $darker_l);
     $light = hslToHex($h, $lighter_s, $lighter_l);
+
+    $darkest = hslToHex($h, $s, $darker_l2);
+    $lightest = hslToHex($h, $lighter_s2, $lighter_l2);
     
     return [
         'dark' => $dark,
         'darker' => $darker,
+        'darkest' => $darkest,
         'light' => $light,
+        'lightest' => $lightest,
     ];
 }
 

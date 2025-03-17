@@ -26,7 +26,7 @@ $userId = getCurrentUserId();
 
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $description = isset($_POST['description']) ? trim($_POST['description']) : '';
-$themeColor = isset($_POST['theme_color']) ? trim($_POST['theme_color']) : '#201E5B';
+$themeColor = isset($_POST['theme_color']) ? trim($_POST['theme_color']) : '#20205E';
 
 // Validate form data
 if (empty($name)) {

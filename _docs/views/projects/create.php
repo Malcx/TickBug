@@ -28,7 +28,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
                     </div>
                     <div class="form-group">
                         <label for="theme_color">Project Theme Color</label>
-                        <input type="color" id="theme_color" name="theme_color" value="#201E5B" required>
+                        <input type="color" id="theme_color" name="theme_color" value="#20205E" required>
                         <small class="form-text text-muted">Choose a theme color for this project.</small>
                     </div>
                     <div class="form-group">

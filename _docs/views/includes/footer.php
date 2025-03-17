@@ -43,6 +43,8 @@ if (isset($project) && isset($project['theme_color'])) {
             --dark: ' . $colors['dark'] . ';
             --darker: ' . $colors['darker'] . ';
             --light: ' . $colors['light'] . ';
+            --darkest: ' . $colors['darkest'] . ';
+            --lightest: ' . $colors['lightest'] . ';
             --dark-rgb: ' . $r . ', ' . $g . ', ' . $b . ';
         }
     </style>';

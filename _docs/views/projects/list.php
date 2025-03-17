@@ -31,14 +31,15 @@ $projects = getUserProjects($userId);
     </div>
 <?php else: ?>
     <div class="row">
-        <?php foreach ($projects as $project): ?>
+        <?php foreach ($projects as $project): 
+            $tempTheme = generateThemeColors($project['theme_color']);
+            ?>
             <div class="col-4 mb-3">
-                <div class="card">
+                <div class="card" style="border: 3px solid <?php echo htmlspecialchars($project['theme_color']); ?>;color: <?php echo htmlspecialchars($project['theme_color']); ?>;">
                     <div class="card-header">
-                        <h3><?php echo htmlspecialchars($project['name']); ?></h3>
+                        <h3> <a href="<?php echo BASE_URL; ?>/projects.php?id=<?php echo $project['project_id']; ?>" style="color: <?php echo htmlspecialchars($project['theme_color']); ?>;"><?php echo htmlspecialchars($project['name']); ?></a></h3>
                     </div>
                     <div class="card-body">
-                        <p><?php echo htmlspecialchars($project['description']); ?></p>
                         
                         <?php if (isset($project['stats'])): ?>
                             <div class="mb-3">
@@ -49,9 +50,9 @@ $projects = getUserProjects($userId);
                         <?php endif; ?>
                     </div>
                     <div class="card-footer">
-                        <a href="<?php echo BASE_URL; ?>/projects.php?id=<?php echo $project['project_id']; ?>" class="btn btn-primary">View Project</a>
+                        <a href="<?php echo BASE_URL; ?>/projects.php?id=<?php echo $project['project_id']; ?>" class="btn btn-primary" style="border-color: <?php echo htmlspecialchars($project['theme_color']); ?>;background-color: <?php echo htmlspecialchars($project['theme_color']); ?>;">View Project</a>
                         <?php if ($project['role'] === 'Owner' || $project['role'] === 'Project Manager'): ?>
-                            <a href="<?php echo BASE_URL; ?>/projects.php?action=edit&id=<?php echo $project['project_id']; ?>" class="btn btn-secondary">Edit</a>
+                            <a href="<?php echo BASE_URL; ?>/projects.php?action=edit&id=<?php echo $project['project_id']; ?>" class="btn btn-secondary" style="border-color: <?php echo htmlspecialchars($tempTheme['lightest']); ?>;background-color: <?php echo htmlspecialchars($tempTheme['lightest']); ?>;">Edit</a>
                         <?php endif; ?>
                     </div>
                 </div>

@@ -1,137 +1,296 @@
--- TickBug Database Structure
--- Use UTF8mb4_bin
+-- phpMyAdmin SQL Dump
+-- version 5.2.0
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1:3306
+-- Generation Time: Mar 16, 2025 at 06:06 PM
+-- Server version: 8.0.31
+-- PHP Version: 8.2.0
 
--- Users table
-CREATE TABLE users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(191) NOT NULL UNIQUE,
-    password VARCHAR(191) NOT NULL,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    reset_token VARCHAR(191) NULL,
-    reset_token_expiry DATETIME NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
--- Projects table
-CREATE TABLE projects (
-    project_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(191) NOT NULL,
-    description TEXT,
-    created_by INT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    archived BOOLEAN NOT NULL DEFAULT FALSE,
-    theme_color varchar(7) DEFAULT '#201E5B'
-    FOREIGN KEY (created_by) REFERENCES users(user_id)
-);
 
--- User roles enum: Owner, Project Manager, Tester, Reviewer, Developer, Designer, Viewer
-CREATE TABLE project_users (
-    project_user_id INT AUTO_INCREMENT PRIMARY KEY,
-    project_id INT NOT NULL,
-    user_id INT NOT NULL,
-    role ENUM('Owner', 'Project Manager', 'Tester', 'Reviewer', 'Developer', 'Designer', 'Viewer') NOT NULL,
-    notification_preferences JSON, -- Store user notification preferences for this project
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (project_id) REFERENCES projects(project_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    UNIQUE KEY unique_project_user (project_id, user_id) -- Each user can only have one role per project
-);
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
--- Deliverables table
-CREATE TABLE deliverables (
-    deliverable_id INT AUTO_INCREMENT PRIMARY KEY,
-    project_id INT NOT NULL,
-    name VARCHAR(191) NOT NULL,
-    description TEXT,
-    display_order INT NOT NULL DEFAULT 0,
-    created_by INT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (project_id) REFERENCES projects(project_id),
-    FOREIGN KEY (created_by) REFERENCES users(user_id)
-);
+--
+-- Database: `tickbug`
+--
 
--- Tickets table
-CREATE TABLE tickets (
-    ticket_id INT AUTO_INCREMENT PRIMARY KEY,
-    deliverable_id INT NOT NULL,
-    title VARCHAR(191) NOT NULL,
-    description TEXT,
-    url VARCHAR(191),
-    status ENUM('New', 'Needs clarification', 'Assigned', 'In progress', 'In review', 'Complete', 'Rejected', 'Ignored') NOT NULL DEFAULT 'New',
-    priority ENUM('1-Critical', '1-Important', '2-Nice to have', '3-Feature Request', '4-Nice to have') NOT NULL,
-    assigned_to INT NULL,
-    created_by INT NOT NULL,
-    display_order INT NOT NULL DEFAULT 0,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (deliverable_id) REFERENCES deliverables(deliverable_id),
-    FOREIGN KEY (assigned_to) REFERENCES users(user_id),
-    FOREIGN KEY (created_by) REFERENCES users(user_id)
-);
+-- --------------------------------------------------------
 
--- Comments table
-CREATE TABLE comments (
-    comment_id INT AUTO_INCREMENT PRIMARY KEY,
-    ticket_id INT NOT NULL,
-    user_id INT NOT NULL,
-    description TEXT,
-    url VARCHAR(191),
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
+--
+-- Table structure for table `activity_log`
+--
 
--- Files table for attachments
-CREATE TABLE files (
-    file_id INT AUTO_INCREMENT PRIMARY KEY,
-    filename VARCHAR(191) NOT NULL,
-    filepath VARCHAR(191) NOT NULL,
-    filesize INT NOT NULL,
-    filetype VARCHAR(50) NOT NULL,
-    uploaded_by INT NOT NULL,
-    uploaded_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (uploaded_by) REFERENCES users(user_id)
-);
+DROP TABLE IF EXISTS `activity_log`;
+CREATE TABLE IF NOT EXISTS `activity_log` (
+  `log_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `project_id` int NOT NULL,
+  `target_type` enum('project','deliverable','ticket','comment','file','user') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `target_id` int NOT NULL,
+  `action` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `details` json DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`log_id`),
+  KEY `user_id` (`user_id`),
+  KEY `project_id` (`project_id`),
+  KEY `idx_activity_log_target` (`target_type`,`target_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Files can be associated with either tickets or comments
-CREATE TABLE ticket_files (
-    ticket_file_id INT AUTO_INCREMENT PRIMARY KEY,
-    ticket_id INT NOT NULL,
-    file_id INT NOT NULL,
-    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE,
-    FOREIGN KEY (file_id) REFERENCES files(file_id) ON DELETE CASCADE
-);
+-- --------------------------------------------------------
 
-CREATE TABLE comment_files (
-    comment_file_id INT AUTO_INCREMENT PRIMARY KEY,
-    comment_id INT NOT NULL,
-    file_id INT NOT NULL,
-    FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE,
-    FOREIGN KEY (file_id) REFERENCES files(file_id) ON DELETE CASCADE
-);
+--
+-- Table structure for table `comments`
+--
 
--- Activity Log table
-CREATE TABLE activity_log (
-    log_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    project_id INT NOT NULL,
-    target_type ENUM('project', 'deliverable', 'ticket', 'comment', 'file', 'user') NOT NULL,
-    target_id INT NOT NULL, -- ID of the item being acted upon
-    action VARCHAR(191) NOT NULL, -- e.g., "created", "updated", "deleted", "status_changed", etc.
-    details JSON, -- Store additional details about the action
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (project_id) REFERENCES projects(project_id)
-);
+DROP TABLE IF EXISTS `comments`;
+CREATE TABLE IF NOT EXISTS `comments` (
+  `comment_id` int NOT NULL AUTO_INCREMENT,
+  `ticket_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `url` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`comment_id`),
+  KEY `ticket_id` (`ticket_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Create indexes for performance
-CREATE INDEX idx_tickets_status ON tickets(status);
-CREATE INDEX idx_tickets_priority ON tickets(priority);
-CREATE INDEX idx_tickets_assigned_to ON tickets(assigned_to);
-CREATE INDEX idx_activity_log_target ON activity_log(target_type, target_id);
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `comment_files`
+--
+
+DROP TABLE IF EXISTS `comment_files`;
+CREATE TABLE IF NOT EXISTS `comment_files` (
+  `comment_file_id` int NOT NULL AUTO_INCREMENT,
+  `comment_id` int NOT NULL,
+  `file_id` int NOT NULL,
+  PRIMARY KEY (`comment_file_id`),
+  KEY `comment_id` (`comment_id`),
+  KEY `file_id` (`file_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `deliverables`
+--
+
+DROP TABLE IF EXISTS `deliverables`;
+CREATE TABLE IF NOT EXISTS `deliverables` (
+  `deliverable_id` int NOT NULL AUTO_INCREMENT,
+  `project_id` int NOT NULL,
+  `name` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `display_order` int NOT NULL DEFAULT '0',
+  `created_by` int NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`deliverable_id`),
+  KEY `project_id` (`project_id`),
+  KEY `created_by` (`created_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `files`
+--
+
+DROP TABLE IF EXISTS `files`;
+CREATE TABLE IF NOT EXISTS `files` (
+  `file_id` int NOT NULL AUTO_INCREMENT,
+  `filename` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `filepath` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `filesize` int NOT NULL,
+  `filetype` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `uploaded_by` int NOT NULL,
+  `uploaded_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`file_id`),
+  KEY `uploaded_by` (`uploaded_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `projects`
+--
+
+DROP TABLE IF EXISTS `projects`;
+CREATE TABLE IF NOT EXISTS `projects` (
+  `project_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `created_by` int NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `archived` tinyint(1) NOT NULL DEFAULT '0',
+  `theme_color` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '#201E5B',
+  PRIMARY KEY (`project_id`),
+  KEY `created_by` (`created_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_users`
+--
+
+DROP TABLE IF EXISTS `project_users`;
+CREATE TABLE IF NOT EXISTS `project_users` (
+  `project_user_id` int NOT NULL AUTO_INCREMENT,
+  `project_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `role` enum('Owner','Project Manager','Tester','Reviewer','Developer','Designer','Viewer') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `notification_preferences` json DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`project_user_id`),
+  UNIQUE KEY `unique_project_user` (`project_id`,`user_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tickets`
+--
+
+DROP TABLE IF EXISTS `tickets`;
+CREATE TABLE IF NOT EXISTS `tickets` (
+  `ticket_id` int NOT NULL AUTO_INCREMENT,
+  `deliverable_id` int NOT NULL,
+  `title` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `url` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `status` enum('New','Needs clarification','Assigned','In progress','In review','Complete','Rejected','Ignored') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'New',
+  `priority` enum('1-Critical','1-Important','2-Nice to have','3-Feature Request','4-Nice to have') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `assigned_to` int DEFAULT NULL,
+  `created_by` int NOT NULL,
+  `display_order` int NOT NULL DEFAULT '0',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ticket_id`),
+  KEY `deliverable_id` (`deliverable_id`),
+  KEY `created_by` (`created_by`),
+  KEY `idx_tickets_status` (`status`),
+  KEY `idx_tickets_priority` (`priority`),
+  KEY `idx_tickets_assigned_to` (`assigned_to`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ticket_files`
+--
+
+DROP TABLE IF EXISTS `ticket_files`;
+CREATE TABLE IF NOT EXISTS `ticket_files` (
+  `ticket_file_id` int NOT NULL AUTO_INCREMENT,
+  `ticket_id` int NOT NULL,
+  `file_id` int NOT NULL,
+  PRIMARY KEY (`ticket_file_id`),
+  KEY `ticket_id` (`ticket_id`),
+  KEY `file_id` (`file_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE IF NOT EXISTS `users` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `first_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `last_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reset_token` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reset_token_expiry` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  ADD CONSTRAINT `activity_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `activity_log_ibfk_2` FOREIGN KEY (`project_id`) REFERENCES `projects` (`project_id`);
+
+--
+-- Constraints for table `comments`
+--
+ALTER TABLE `comments`
+  ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`ticket_id`),
+  ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `comment_files`
+--
+ALTER TABLE `comment_files`
+  ADD CONSTRAINT `comment_files_ibfk_1` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `comment_files_ibfk_2` FOREIGN KEY (`file_id`) REFERENCES `files` (`file_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `deliverables`
+--
+ALTER TABLE `deliverables`
+  ADD CONSTRAINT `deliverables_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`project_id`),
+  ADD CONSTRAINT `deliverables_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `files`
+--
+ALTER TABLE `files`
+  ADD CONSTRAINT `files_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `projects`
+--
+ALTER TABLE `projects`
+  ADD CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `project_users`
+--
+ALTER TABLE `project_users`
+  ADD CONSTRAINT `project_users_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`project_id`),
+  ADD CONSTRAINT `project_users_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `tickets`
+--
+ALTER TABLE `tickets`
+  ADD CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`deliverable_id`) REFERENCES `deliverables` (`deliverable_id`),
+  ADD CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `tickets_ibfk_3` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `ticket_files`
+--
+ALTER TABLE `ticket_files`
+  ADD CONSTRAINT `ticket_files_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`ticket_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `ticket_files_ibfk_2` FOREIGN KEY (`file_id`) REFERENCES `files` (`file_id`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

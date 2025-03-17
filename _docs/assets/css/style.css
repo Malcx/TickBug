@@ -60,8 +60,8 @@ button, .btn {
 }
 
 .btn-secondary:hover {
-  background-color: #b0abcf;
-  border-color: #b0abcf;
+  background-color: var(--lightest);
+  border-color: var(--lightest);
 }
 
 .btn-danger {
