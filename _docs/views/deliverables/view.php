@@ -46,44 +46,78 @@ $additionalScripts = [
 // Include header
 require_once ROOT_PATH . '/views/includes/header.php';
 
-// Group tickets by priority
-$priorityGroups = [];
-$priorityOrder = [
-    '1-Critical' => 1,
-    '1-Important' => 2,
-    '2-Nice to have' => 3,
-    '3-Feature Request' => 4,
-    '4-Nice to have' => 5,
-    '6-Not set' => 6
-];
+// First, query the database to get the actual priority names and their IDs
+$conn = getDbConnection();
+$stmt = $conn->prepare("SELECT priority_id, name FROM priorities ORDER BY priority_id");
+$stmt->execute();
+$prioritiesResult = $stmt->get_result();
 
-// Initialize priority groups
-foreach ($priorityOrder as $priority => $order) {
-    $priorityGroups[$priority] = [
-        'name' => $priority,
-        'order' => $order,
+// Create the priority order mapping from the database results
+$priorityOrder = [];
+$priorityGroups = [];
+
+while ($priority = $prioritiesResult->fetch_assoc()) {
+    $priorityName = $priority['name'];
+    $priorityId = $priority['priority_id'];
+    
+    // Add to the ordering map
+    $priorityOrder[$priorityName] = $priorityId;
+    
+    // Initialize the priority group
+    $priorityGroups[$priorityName] = [
+        'name' => $priorityName,
+        'order' => $priorityId, // Use the priority_id as the order
         'tickets' => []
     ];
+}
+
+// If no priorities found in the database (fallback), use hardcoded priorities
+if (empty($priorityGroups)) {
+    $priorityOrder = [
+        '1-Critical' => 1,
+        '2-Important' => 2,
+        '3-Nice to have' => 3,
+        '4-Feature Request' => 4,
+        '5-Cosmetic' => 5,
+        '6-Not set' => 6
+    ];
+    
+    foreach ($priorityOrder as $priorityName => $order) {
+        $priorityGroups[$priorityName] = [
+            'name' => $priorityName,
+            'order' => $order,
+            'tickets' => []
+        ];
+    }
 }
 
 // Group tickets by priority
 if (!empty($deliverable['tickets'])) {
     foreach ($deliverable['tickets'] as $ticket) {
         $priorityName = $ticket['priority_name'];
-        if (isset($priorityGroups[$priorityName])) {
-            $priorityGroups[$priorityName]['tickets'][] = $ticket;
-        } else {
-            // Fallback for any priority not in our predefined list
+        
+        // If this priority doesn't exist in our groups, create it
+        if (!isset($priorityGroups[$priorityName])) {
+            // Try to extract a numeric value from the beginning of the priority name
+            if (preg_match('/^(\d+)/', $priorityName, $matches)) {
+                $order = (int)$matches[1];
+            } else {
+                $order = 999; // Fallback order for priorities without numeric prefix
+            }
+            
             $priorityGroups[$priorityName] = [
                 'name' => $priorityName,
-                'order' => 999, // Put at the end
-                'tickets' => [$ticket]
+                'order' => $order,
+                'tickets' => []
             ];
         }
+        
+        // Add the ticket to its priority group
+        $priorityGroups[$priorityName]['tickets'][] = $ticket;
     }
 }
 
-// Sort priority groups by order
+// Sort priority groups by their order value
 uasort($priorityGroups, function($a, $b) {
     return $a['order'] - $b['order'];
 });
