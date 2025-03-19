@@ -33,6 +33,19 @@ foreach ($deliverables as $deliverable) {
 }
 ?>
 
+<div class="row mb-2">
+    <!-- Breadcrumbs -->
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/projects.php">Projects</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><?php echo htmlspecialchars($project['name']); ?></li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
 <div class="row mb-3">
     <div class="col-8">
         <h1><?php echo htmlspecialchars($project['name']); ?></h1>

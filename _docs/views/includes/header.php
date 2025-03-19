@@ -21,9 +21,11 @@ The main header template that's included at the top of each page
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/modal.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/breadcrumbs.css"> 
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/project-view.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/deliverable-view.css">
    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/config.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/modal.js"></script> <!-- Add the custom modal JS -->
     <script src="<?php echo BASE_URL; ?>/assets/js/project-view.js"></script>

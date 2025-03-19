@@ -15,6 +15,18 @@ $userId = getCurrentUserId();
 $projects = getUserProjects($userId);
 ?>
 
+<div class="row mb-2">
+    <!-- Breadcrumbs -->
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">Projects</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
 <div class="row mb-3">
     <div class="col-6">
         <h1>My Projects</h1>

@@ -45,6 +45,36 @@ function initSortable() {
         connectWith: false, // Only allow sorting within the same priority group
         cursor: "grabbing",
         opacity: 0.8,
+        helper: "clone",
+        forcePlaceholderSize: true,
+        tolerance: "pointer",
+        // Add touch settings
+        delay: 150, // Delay for touch devices to prevent accidental drags
+        distance: 10, // Minimum distance to start drag - helps on touch devices
+        cancel: ".ticket-title, a, button", // Prevent drag from starting on interactive elements
+        scroll: true, // Enable scrolling during drag - important for mobile
+        // Ensure handle is used for better mobile experience
+        handle: ".drag-handle",
+        start: function(event, ui) {
+            ui.placeholder.height(ui.item.outerHeight());
+            ui.item.addClass("ui-sortable-helper");
+            $(this).addClass("ui-sortable-active");
+        },
+        over: function(event, ui) {
+            $(this).addClass("ui-sortable-hover");
+        },
+        out: function(event, ui) {
+            $(this).removeClass("ui-sortable-hover");
+        },
+        stop: function(event, ui) {
+            ui.item.removeClass("ui-sortable-helper");
+            $(".sortable-tickets").removeClass("ui-sortable-active ui-sortable-hover");
+            // Cancel click events that might be triggered right after sorting
+            ui.item.one('click', function(e) {
+                e.stopPropagation();
+                return false;
+            });
+        },
         update: function(event, ui) {
             // Get the priority and deliverable ID for this container
             const priorityGroup = $(this).data("priority");
@@ -57,23 +87,8 @@ function initSortable() {
             
             // Save the new order to the database
             saveTicketOrder(deliverableId, priorityGroup, ticketIds);
-        },
-        // Prevent click event when sorting ends
-        stop: function(event, ui) {
-            // Cancel click events that might be triggered right after sorting
-            ui.item.one('click', function(e) {
-                e.stopPropagation();
-                return false;
-            });
         }
     }).disableSelection(); // Prevents text selection during drag
-    
-    // Make the title links still clickable
-    $(".ticket-title").on("click", function(e) {
-        e.stopPropagation();
-        // Allow the default action (following the link)
-        return true;
-    });
 }
 
 /**

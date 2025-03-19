@@ -179,6 +179,7 @@ CREATE TABLE IF NOT EXISTS `project_users` (
   `notification_preferences` json DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `display_order` INT DEFAULT NULL,
   PRIMARY KEY (`project_user_id`),
   UNIQUE KEY `unique_project_user` (`project_id`,`user_id`),
   KEY `user_id` (`user_id`)
@@ -275,6 +276,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
 
 --
 -- Constraints for dumped tables

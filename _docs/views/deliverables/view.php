@@ -235,6 +235,7 @@ uasort($priorityGroups, function($a, $b) {
                                              data-assignee="<?php echo $ticket['assigned_to']; ?>">
                                             <div class="card-body p-2">
                                                 <h5 class="mb-1">
+                                                    <span class="drag-handle"></span>
                                                     <a href="<?php echo BASE_URL; ?>/tickets.php?id=<?php echo $ticket['ticket_id']; ?>" class="text-dark ticket-title">
                                                         <?php echo htmlspecialchars($ticket['title']); ?>
                                                     </a>
