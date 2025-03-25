@@ -42,12 +42,12 @@ $projects = getUserProjects($userId);
         You don't have any projects yet. Create a new project to get started.
     </div>
 <?php else: ?>
-    <div class="row">
+    <div class="row" id="projects-container">
         <?php foreach ($projects as $project): 
             $tempTheme = generateThemeColors($project['theme_color']);
             ?>
             <div class="col-4 mb-3">
-                <div class="card" style="border: 3px solid <?php echo htmlspecialchars($project['theme_color']); ?>;color: <?php echo htmlspecialchars($project['theme_color']); ?>;">
+                <div class="card" style="border: 3px solid <?php echo htmlspecialchars($project['theme_color']); ?>;color: <?php echo htmlspecialchars($project['theme_color']); ?>;" data-id="<?php echo $project['project_id']; ?>">
                     <div class="card-header">
                         <h3> <a href="<?php echo BASE_URL; ?>/projects.php?id=<?php echo $project['project_id']; ?>" style="color: <?php echo htmlspecialchars($project['theme_color']); ?>;"><?php echo htmlspecialchars($project['name']); ?></a></h3>
                     </div>

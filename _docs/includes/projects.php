@@ -40,9 +40,9 @@ function createProject($name, $description, $themeColor, $userId) {
         
         // Add user as project owner
         $ownerRole = 'Owner';
-        $stmt = $conn->prepare("INSERT INTO project_users (project_id, user_id, role) VALUES (?, ?, ?)");
-        $stmt->bind_param("iis", $projectId, $userId, $ownerRole);
-        
+        $stmt = $conn->prepare("INSERT INTO project_users (project_id, user_id, role, display_order) VALUES (?, ?, ?, ?)");
+        $displayOrder = 0;
+        $stmt->bind_param("iisi", $projectId, $userId, $ownerRole, $displayOrder);        
         if (!$stmt->execute()) {
             throw new Exception("Failed to add user to project: " . $conn->error);
         }
@@ -139,11 +139,11 @@ function getUserProjects($userId) {
     $conn = getDbConnection();
     
     $stmt = $conn->prepare("
-        SELECT p.*, pu.role
+        SELECT p.*, pu.role, pu.display_order
         FROM projects p
         JOIN project_users pu ON p.project_id = pu.project_id
         WHERE pu.user_id = ? AND p.archived = 0
-        ORDER BY p.updated_at DESC
+        ORDER BY pu.display_order, p.updated_at DESC
     ");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
@@ -343,11 +343,11 @@ function getUserArchivedProjects($userId) {
     $conn = getDbConnection();
     
     $stmt = $conn->prepare("
-        SELECT p.*, pu.role
+        SELECT p.*, pu.role, pu.display_order
         FROM projects p
         JOIN project_users pu ON p.project_id = pu.project_id
         WHERE pu.user_id = ? AND p.archived = 1
-        ORDER BY p.updated_at DESC
+        ORDER BY pu.display_order, p.updated_at DESC
     ");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
@@ -435,9 +435,17 @@ function addUserToProject($projectId, $email, $role, $addedBy) {
         }
     }
     
+    // Get max display order for this user
+    $stmt = $conn->prepare("SELECT MAX(display_order) as max_order FROM project_users WHERE user_id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $displayOrder = ($row['max_order'] === null) ? 0 : $row['max_order'] + 1;
+
     // Add user to project
-    $stmt = $conn->prepare("INSERT INTO project_users (project_id, user_id, role) VALUES (?, ?, ?)");
-    $stmt->bind_param("iis", $projectId, $userId, $role);
+    $stmt = $conn->prepare("INSERT INTO project_users (project_id, user_id, role, display_order) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iisi", $projectId, $userId, $role, $displayOrder);
     
     if ($stmt->execute()) {
         // Get project info for notification

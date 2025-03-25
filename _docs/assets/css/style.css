@@ -373,3 +373,35 @@ label {
 .activity-item{
 border-bottom:1px solid #ccc;
 }
+
+
+
+
+/* Add to assets/css/style.css or create a new file */
+.project-placeholder {
+    visibility: visible !important;
+    margin-bottom: 1.5rem;
+}
+
+.project-placeholder::before {
+    content: "";
+    display: block;
+    border: 2px dashed #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: var(--border-radius);
+    height: 200px; /* Approximate height of a project card */
+}
+
+.card.dragging {
+    transform: rotate(1deg) scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Make card header show the drag cursor */
+.card-header {
+    cursor: grab;
+}
+
+.card-header:active {
+    cursor: grabbing;
+}

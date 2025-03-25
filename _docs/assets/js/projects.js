@@ -204,6 +204,55 @@ $(document).ready(function() {
         }
     });
     
+    // Initialize sortable for projects
+    if ($("#projects-container").length) {
+        $("#projects-container").sortable({
+            items: ".col-4",
+            handle: ".card-header", // Use header as drag handle 
+            cursor: "move",
+            opacity: 0.8,
+            helper: "clone",
+            forcePlaceholderSize: true,
+            placeholder: "col-4 project-placeholder",
+            start: function(event, ui) {
+                // Set placeholder height and width to match the item being dragged
+                ui.placeholder.height(ui.item.height());
+                ui.placeholder.width(ui.item.width());
+                ui.helper.css('z-index', 1000);
+                
+                // Add a class to the helper for styling
+                ui.helper.find('.card').addClass('dragging');
+            },
+            stop: function(event, ui) {
+                ui.item.find('.card').removeClass('dragging');
+            },
+            update: function(event, ui) {
+                const projects = $(this).children(".col-4").toArray();
+                const projectOrder = projects.map(project => $(project).find(".card").data("id"));
+                
+                // Update order in database
+                $.ajax({
+                    url: BASE_URL + "/api/projects/reorder.php",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        order: projectOrder
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showNotification("success", "Projects reordered successfully.");
+                        } else {
+                            showNotification("error", response.message);
+                        }
+                    },
+                    error: function() {
+                        showNotification("error", "An error occurred while reordering projects.");
+                    }
+                });
+            }
+        });
+    }
+
     // Toggle filter on projects list
     $("#filter-toggle").click(function() {
         $("#filter-form").slideToggle();

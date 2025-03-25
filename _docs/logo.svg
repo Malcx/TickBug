@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <!-- Outer circle -->
-  <circle cx="50" cy="50" r="49.5" fill="#FFFFFF" />
+  <circle cx="50" cy="50" r="50" fill="#FFFFFF" />
 
   <!-- Background circle -->
   <circle cx="50" cy="50" r="46" fill="#4CAF50" />
@@ -28,5 +28,5 @@
   <path d="M63 65 C75 65, 80 70, 85 75" stroke="#333333" stroke-width="5" fill="none" />
   
   <!-- Tick overlay -->
-  <path d="M30 50 L45 65 L70 35" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M30 50 L45 65 L70 35" stroke="white" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" />
 </svg>
