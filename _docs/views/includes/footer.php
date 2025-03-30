@@ -16,6 +16,16 @@ The main footer template that's included at the bottom of each page
         document.getElementById('navToggle').addEventListener('click', function() {
             document.getElementById('navLinks').classList.toggle('show');
         });
+
+
+
+        // Disable autocomplete on all input fields
+        document.addEventListener('DOMContentLoaded', function() {
+         document.querySelectorAll('input').forEach(function(input) {
+            input.setAttribute('autocomplete', 'off');
+          });
+        });
+
     </script>
     
     <?php if (isset($additionalScripts)): ?>
@@ -29,7 +39,7 @@ The main footer template that's included at the bottom of each page
 <?php
 
 // Output project-specific theme if we're on a project page
-if (isset($project) && isset($project['theme_color'])) {
+if (isset($project) && isset($project['theme_color']) && isset($project['project_id'])) {
     $colors = generateThemeColors($project['theme_color']);
     
     // Parse the dark color to get RGB components for rgba usage

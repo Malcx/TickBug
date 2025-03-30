@@ -210,7 +210,7 @@ function saveFilterState() {
  */
 function getFilterState() {
     var defaultFilters = {
-        status: '',
+        status: 'open',
         priority: '',
         assignee: '',
         search: '',

@@ -163,7 +163,7 @@ uasort($priorityGroups, function($a, $b) {
                                 <div class="col-6 mb-2">
                                     <select id="filter-status" class="form-control form-control-sm" placeholder="Status">
                                         <option value="">All Statuses</option>
-                                        <option value="open">Open Tickets</option>
+                                        <option value="open" selected>Open Tickets</option>
                                         <option value="closed">Closed Tickets</option>
                                         <option value="" disabled>──────────</option>
                                         <option value="New">New</option>
