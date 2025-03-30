@@ -358,7 +358,7 @@ function generateSystemReport() {
     $stmt = $conn->prepare("
         SELECT COUNT(*) as count 
         FROM tickets 
-        WHERE status NOT IN ('Complete', 'Rejected', 'Ignored')
+        WHERE status_id NOT IN (6, 7, 8)
     ");
     $stmt->execute();
     $result = $stmt->get_result();
@@ -369,7 +369,7 @@ function generateSystemReport() {
     $stmt = $conn->prepare("
         SELECT COUNT(*) as count 
         FROM tickets 
-        WHERE priority = '1-Critical' AND status NOT IN ('Complete', 'Rejected', 'Ignored')
+        WHERE priority_id = 1 AND status_id NOT IN (6, 7, 8)
     ");
     $stmt->execute();
     $result = $stmt->get_result();
