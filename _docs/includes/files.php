@@ -20,12 +20,24 @@ function uploadFile($file, $userId) {
         return ['success' => false, 'message' => 'File is too large. Maximum size is ' . (MAX_FILE_SIZE / 1024 / 1024) . 'MB.'];
     }
     
-    // Check file type
-    $filetype = mime_content_type($file['tmp_name']);
-    if (!in_array($filetype, ALLOWED_FILE_TYPES)) {
+    // Check file type using finfo (more reliable than deprecated mime_content_type)
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $filetype = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+
+    if (!$filetype || !in_array($filetype, ALLOWED_FILE_TYPES)) {
         return ['success' => false, 'message' => 'File type not allowed.'];
     }
-    
+
+    // Validate file extension as additional security measure
+    $allowedExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'png', 'jpg', 'jpeg', 'gif', 'txt', 'csv', 'zip'];
+    $filename = $file['name'];
+    $fileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+    if (!in_array($fileExtension, $allowedExtensions)) {
+        return ['success' => false, 'message' => 'File extension not allowed.'];
+    }
+
     // Create uploads directory if it doesn't exist
     if (!file_exists(UPLOADS_PATH)) {
         mkdir(UPLOADS_PATH, 0755, true);
@@ -281,8 +293,8 @@ function canAccessFile($fileId, $userId) {
     
     if ($fileResult->num_rows > 0) {
         $row = $fileResult->fetch_assoc();
-        return ($row['uploaded_by'] === $userId);
+        return ((int)$row['uploaded_by'] === (int)$userId);
     }
-    
+
     return false;
 }

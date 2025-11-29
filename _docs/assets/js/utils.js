@@ -16,8 +16,9 @@ function showFormError(form, message) {
     // Remove existing error messages
     $form.find(".form-error").remove();
 
-    // Add new error message
-    $form.prepend('<div class="alert alert-danger form-error">' + message + '</div>');
+    // Add new error message with escaped content
+    var errorDiv = $('<div class="alert alert-danger form-error"></div>').text(message);
+    $form.prepend(errorDiv);
 
     // Scroll to error message
     $('html, body').animate({
@@ -37,8 +38,9 @@ function showFormSuccess(form, message) {
     // Remove existing messages
     $form.find(".form-error, .form-success").remove();
 
-    // Add new success message
-    $form.prepend('<div class="alert alert-success form-success">' + message + '</div>');
+    // Add new success message with escaped content
+    var successDiv = $('<div class="alert alert-success form-success"></div>').text(message);
+    $form.prepend(successDiv);
 
     // Scroll to success message
     $('html, body').animate({
@@ -64,8 +66,8 @@ function showNotification(type, message, duration) {
         container = $("#notification-container");
     }
 
-    // Create notification element
-    var notification = $('<div class="notification notification-' + type + '">' + message + '</div>');
+    // Create notification element with escaped content
+    var notification = $('<div class="notification notification-' + type + '"></div>').text(message);
     container.append(notification);
 
     // Show notification with animation

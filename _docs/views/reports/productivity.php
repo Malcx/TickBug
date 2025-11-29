@@ -73,12 +73,12 @@ require_once ROOT_PATH . '/views/includes/header.php';
             
             <div class="form-group mr-3">
                 <label for="start_date" class="mr-2">Start Date:</label>
-                <input type="date" id="start_date" name="start_date" class="form-control" value="<?php echo isset($_GET['start_date']) ? $_GET['start_date'] : ''; ?>">
+                <input type="date" id="start_date" name="start_date" class="form-control" value="<?php echo isset($_GET['start_date']) ? htmlspecialchars($_GET['start_date'], ENT_QUOTES, 'UTF-8') : ''; ?>">
             </div>
-            
+
             <div class="form-group mr-3">
                 <label for="end_date" class="mr-2">End Date:</label>
-                <input type="date" id="end_date" name="end_date" class="form-control" value="<?php echo isset($_GET['end_date']) ? $_GET['end_date'] : ''; ?>">
+                <input type="date" id="end_date" name="end_date" class="form-control" value="<?php echo isset($_GET['end_date']) ? htmlspecialchars($_GET['end_date'], ENT_QUOTES, 'UTF-8') : ''; ?>">
             </div>
             
             <button type="submit" class="btn btn-primary">Apply Date Range</button>
@@ -151,10 +151,10 @@ require_once ROOT_PATH . '/views/includes/header.php';
                                             $userReportUrl .= '&project_id=' . $report['project']['project_id'];
                                         }
                                         if (isset($_GET['start_date'])) {
-                                            $userReportUrl .= '&start_date=' . $_GET['start_date'];
+                                            $userReportUrl .= '&start_date=' . urlencode($_GET['start_date']);
                                         }
                                         if (isset($_GET['end_date'])) {
-                                            $userReportUrl .= '&end_date=' . $_GET['end_date'];
+                                            $userReportUrl .= '&end_date=' . urlencode($_GET['end_date']);
                                         }
                                     ?>
                                     <a href="<?php echo $userReportUrl; ?>" class="btn btn-sm btn-primary">View Details</a>

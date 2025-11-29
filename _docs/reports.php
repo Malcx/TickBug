@@ -61,7 +61,21 @@ switch ($reportType) {
         $targetUserId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : $userId;
         $startDate = isset($_GET['start_date']) ? $_GET['start_date'] : null;
         $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : null;
-        
+
+        // Validate date formats
+        if ($startDate && !isValidDateFormat($startDate)) {
+            setFlashMessage('error', 'Invalid start date format. Use YYYY-MM-DD.');
+            redirect(BASE_URL . '/reports.php?type=user&user_id=' . $targetUserId);
+        }
+        if ($endDate && !isValidDateFormat($endDate)) {
+            setFlashMessage('error', 'Invalid end date format. Use YYYY-MM-DD.');
+            redirect(BASE_URL . '/reports.php?type=user&user_id=' . $targetUserId);
+        }
+        if ($startDate && $endDate && strtotime($startDate) > strtotime($endDate)) {
+            setFlashMessage('error', 'Start date cannot be after end date.');
+            redirect(BASE_URL . '/reports.php?type=user&user_id=' . $targetUserId);
+        }
+
         $report = generateUserActivityReport($targetUserId, $projectId, $startDate, $endDate);
         $pageTitle = 'User Activity Report: ' . $report['user']['first_name'] . ' ' . $report['user']['last_name'];
         require_once ROOT_PATH . '/views/reports/user.php';
@@ -78,7 +92,22 @@ switch ($reportType) {
         // User productivity report
         $startDate = isset($_GET['start_date']) ? $_GET['start_date'] : null;
         $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : null;
-        
+
+        // Validate date formats
+        $redirectUrl = BASE_URL . '/reports.php?type=productivity' . ($projectId ? '&project_id=' . $projectId : '');
+        if ($startDate && !isValidDateFormat($startDate)) {
+            setFlashMessage('error', 'Invalid start date format. Use YYYY-MM-DD.');
+            redirect($redirectUrl);
+        }
+        if ($endDate && !isValidDateFormat($endDate)) {
+            setFlashMessage('error', 'Invalid end date format. Use YYYY-MM-DD.');
+            redirect($redirectUrl);
+        }
+        if ($startDate && $endDate && strtotime($startDate) > strtotime($endDate)) {
+            setFlashMessage('error', 'Start date cannot be after end date.');
+            redirect($redirectUrl);
+        }
+
         $report = generateUserProductivityReport($projectId, $startDate, $endDate);
         $pageTitle = $projectId ? 'Team Productivity Report: ' . $report['project']['name'] : 'Overall Team Productivity Report';
         require_once ROOT_PATH . '/views/reports/productivity.php';
