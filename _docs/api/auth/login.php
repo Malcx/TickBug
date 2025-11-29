@@ -1,57 +1,22 @@
 <?php
-// api/auth/login.php
-// Login API endpoint
+/**
+ * api/auth/login.php
+ * Login API endpoint
+ */
 
-// Include helper functions
 require_once '../../includes/helpers.php';
 
-// Start session
-startSession();
+// Initialize API request (no login required, but POST method is)
+$api = initApiRequest(['requireLogin' => false]);
 
-// Check request method
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // Return error for non-POST requests
-    $response = ['success' => false, 'message' => 'Invalid request method.'];
-    
-    if (isAjaxRequest()) {
-        sendJsonResponse($response);
-    } else {
-        setFlashMessage('error', $response['message']);
-        redirect(BASE_URL . '/login.php');
-    }
-}
-
-// Get form data
-$email = isset($_POST['email']) ? trim($_POST['email']) : '';
-$password = isset($_POST['password']) ? $_POST['password'] : '';
-
-// Validate form data
-if (empty($email) || empty($password)) {
-    $response = ['success' => false, 'message' => 'Email and password are required.'];
-    
-    if (isAjaxRequest()) {
-        sendJsonResponse($response);
-    } else {
-        setFlashMessage('error', $response['message']);
-        redirect(BASE_URL . '/login.php');
-    }
-}
+// Get and validate parameters
+$params = getPostParams([
+    ['name' => 'email', 'type' => 'email', 'required' => true, 'message' => 'Email is required.'],
+    ['name' => 'password', 'type' => 'string', 'required' => true, 'message' => 'Password is required.']
+]);
 
 // Attempt login
-$result = loginUser($email, $password);
+$result = loginUser($params['email'], $params['password']);
 
-// Return response
-if (isAjaxRequest()) {
-    sendJsonResponse($result);
-} else {
-    if ($result['success']) {
-        setFlashMessage('success', 'Login successful.');
-        redirect(BASE_URL . '/projects.php');
-    } else {
-        setFlashMessage('error', $result['message']);
-        redirect(BASE_URL . '/login.php');
-    }
-}
-
-// ------------------------------------------------------------
-
+// Handle response (supports both AJAX and form submissions)
+handleFormResult($result, BASE_URL . '/projects.php', BASE_URL . '/login.php', 'Login successful.');

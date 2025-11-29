@@ -1,42 +1,21 @@
 <?php
+/**
+ * api/deliverables/delete.php
+ * Delete deliverable API endpoint
+ */
 
-// ------------------------------------------------------------
-
-// api/deliverables/delete.php
-// Delete deliverable API endpoint
-
-// Include helper functions
 require_once '../../includes/helpers.php';
 
-// Start session
-startSession();
+// Initialize API request
+$api = initApiRequest(['loginMessage' => 'You must be logged in to delete a deliverable.']);
+$userId = $api['userId'];
 
-// Check if user is logged in
-if (!isLoggedIn()) {
-    $response = ['success' => false, 'message' => 'You must be logged in to delete a deliverable.'];
-    sendJsonResponse($response);
-}
+// Get and validate parameters
+$params = getPostParams([
+    ['name' => 'deliverable_id', 'type' => 'int', 'required' => true, 'message' => 'Deliverable ID is required.']
+]);
 
-// Check request method
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $response = ['success' => false, 'message' => 'Invalid request method.'];
-    sendJsonResponse($response);
-}
+// Delete deliverable (deleteDeliverable handles permission checking internally)
+$result = deleteDeliverable($params['deliverable_id'], $userId);
 
-// Get current user ID
-$userId = getCurrentUserId();
-
-// Get form data
-$deliverableId = isset($_POST['deliverable_id']) ? (int)$_POST['deliverable_id'] : 0;
-
-// Validate form data
-if (empty($deliverableId)) {
-    $response = ['success' => false, 'message' => 'Deliverable ID is required.'];
-    sendJsonResponse($response);
-}
-
-// Delete deliverable
-$result = deleteDeliverable($deliverableId, $userId);
-
-// Return response
 sendJsonResponse($result);
