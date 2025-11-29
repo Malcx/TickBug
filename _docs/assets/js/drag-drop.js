@@ -66,8 +66,9 @@ function initTicketDragDrop() {
         hoverClass: "drag-over",
         drop: function(event, ui) {
             var ticketId = ui.draggable.data("id");
-            var status = $(this).data("status");
-            changeTicketStatus(ticketId, status);
+            var statusId = $(this).data("status-id");
+            var statusName = $(this).data("status");
+            changeTicketStatus(ticketId, statusId, statusName);
         }
     });
 }
@@ -134,10 +135,10 @@ function assignTicket(ticketId, userId) {
 /**
  * Change a ticket's status
  */
-function changeTicketStatus(ticketId, status) {
+function changeTicketStatus(ticketId, statusId, statusName) {
     ajaxRequest({
         url: BASE_URL + "/api/tickets/change-status.php",
-        data: { ticket_id: ticketId, status: status },
+        data: { ticket_id: ticketId, status_id: statusId },
         showNotifications: true,
         successMessage: "Ticket status changed successfully.",
         onSuccess: function() {
@@ -147,8 +148,8 @@ function changeTicketStatus(ticketId, status) {
                 return cls.startsWith("badge-");
             });
             statusBadge.removeClass(oldStatusClass);
-            var newStatusClass = "badge-" + status.toLowerCase().replace(/ /g, "-");
-            statusBadge.addClass(newStatusClass).text(status);
+            var newStatusClass = "badge-" + statusName.toLowerCase().replace(/ /g, "-");
+            statusBadge.addClass(newStatusClass).text(statusName);
         }
     });
 }

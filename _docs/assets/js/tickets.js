@@ -102,15 +102,19 @@ $(document).ready(function() {
             commentUrl = urlMatch[1];
         }
 
+        // Escape values for safe HTML insertion
+        var escapedDescription = $('<div>').text(commentDescription).html();
+        var escapedUrl = $('<div>').text(commentUrl).html();
+
         var editForm = $('<form id="editCommentForm" action="' + BASE_URL + '/api/comments/update.php" method="POST" enctype="multipart/form-data">' +
             '<input type="hidden" name="comment_id" value="' + commentId + '">' +
             '<div class="form-group">' +
             '<label for="description">Comment</label>' +
-            '<textarea id="description" name="description" rows="3" class="form-control" required>' + commentDescription + '</textarea>' +
+            '<textarea id="description" name="description" rows="3" class="form-control" required>' + escapedDescription + '</textarea>' +
             '</div>' +
             '<div class="form-group">' +
             '<label for="url">URL (optional)</label>' +
-            '<input type="url" id="url" name="url" class="form-control" value="' + commentUrl + '">' +
+            '<input type="url" id="url" name="url" class="form-control" value="' + escapedUrl + '">' +
             '</div>' +
             '<div class="form-group">' +
             '<label for="files">Add More Files (optional)</label>' +

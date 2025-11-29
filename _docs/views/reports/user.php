@@ -18,7 +18,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
         <div class="btn-group">
             <a href="<?php echo BASE_URL; ?>/reports.php" class="btn btn-secondary">Overview</a>
             <?php if (isset($_GET['project_id'])): ?>
-                <a href="<?php echo BASE_URL; ?>/reports.php?type=project&project_id=<?php echo $_GET['project_id']; ?>" class="btn btn-secondary">Project Status</a>
+                <a href="<?php echo BASE_URL; ?>/reports.php?type=project&project_id=<?php echo htmlspecialchars($_GET['project_id'], ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary">Project Status</a>
             <?php endif; ?>
             <button class="btn btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Export
@@ -40,7 +40,7 @@ require_once ROOT_PATH . '/views/includes/header.php';
             <input type="hidden" name="user_id" value="<?php echo $report['user']['user_id']; ?>">
             
             <?php if (isset($_GET['project_id'])): ?>
-                <input type="hidden" name="project_id" value="<?php echo $_GET['project_id']; ?>">
+                <input type="hidden" name="project_id" value="<?php echo htmlspecialchars($_GET['project_id'], ENT_QUOTES, 'UTF-8'); ?>">
             <?php else: ?>
                 <div class="form-group mr-3">
                     <label for="project_id" class="mr-2">Project:</label>
@@ -59,12 +59,12 @@ require_once ROOT_PATH . '/views/includes/header.php';
             
             <div class="form-group mr-3">
                 <label for="start_date" class="mr-2">From:</label>
-                <input type="date" id="start_date" name="start_date" class="form-control" value="<?php echo isset($_GET['start_date']) ? $_GET['start_date'] : ''; ?>">
+                <input type="date" id="start_date" name="start_date" class="form-control" value="<?php echo isset($_GET['start_date']) ? htmlspecialchars($_GET['start_date'], ENT_QUOTES, 'UTF-8') : ''; ?>">
             </div>
-            
+
             <div class="form-group mr-3">
                 <label for="end_date" class="mr-2">To:</label>
-                <input type="date" id="end_date" name="end_date" class="form-control" value="<?php echo isset($_GET['end_date']) ? $_GET['end_date'] : ''; ?>">
+                <input type="date" id="end_date" name="end_date" class="form-control" value="<?php echo isset($_GET['end_date']) ? htmlspecialchars($_GET['end_date'], ENT_QUOTES, 'UTF-8') : ''; ?>">
             </div>
             
             <button type="submit" class="btn btn-primary">Filter</button>
