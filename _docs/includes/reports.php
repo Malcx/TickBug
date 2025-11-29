@@ -23,23 +23,13 @@ function generateProjectStatusReport($projectId) {
     
     // Get tickets by status
     $stmt = $conn->prepare("
-        SELECT t.status, COUNT(*) as count
+        SELECT s.name as status, COUNT(*) as count
         FROM tickets t
         JOIN deliverables d ON t.deliverable_id = d.deliverable_id
+        JOIN statuses s ON t.status_id = s.status_id
         WHERE d.project_id = ?
-        GROUP BY t.status
-        ORDER BY 
-            CASE 
-                WHEN t.status = 'New' THEN 1
-                WHEN t.status = 'Needs clarification' THEN 2
-                WHEN t.status = 'Assigned' THEN 3
-                WHEN t.status = 'In progress' THEN 4
-                WHEN t.status = 'In review' THEN 5
-                WHEN t.status = 'Complete' THEN 6
-                WHEN t.status = 'Rejected' THEN 7
-                WHEN t.status = 'Ignored' THEN 8
-                ELSE 9
-            END
+        GROUP BY t.status_id, s.name
+        ORDER BY t.status_id
     ");
     $stmt->bind_param("i", $projectId);
     $stmt->execute();
@@ -53,20 +43,13 @@ function generateProjectStatusReport($projectId) {
     
     // Get tickets by priority
     $stmt = $conn->prepare("
-        SELECT t.priority, COUNT(*) as count
+        SELECT p.name as priority, COUNT(*) as count
         FROM tickets t
         JOIN deliverables d ON t.deliverable_id = d.deliverable_id
+        JOIN priorities p ON t.priority_id = p.priority_id
         WHERE d.project_id = ?
-        GROUP BY t.priority
-        ORDER BY 
-            CASE 
-                WHEN t.priority = '1-Critical' THEN 1
-                WHEN t.priority = '1-Important' THEN 2
-                WHEN t.priority = '2-Nice to have' THEN 3
-                WHEN t.priority = '3-Feature Request' THEN 4
-                WHEN t.priority = '4-Nice to have' THEN 5
-                ELSE 6
-            END
+        GROUP BY t.priority_id, p.name
+        ORDER BY t.priority_id
     ");
     $stmt->bind_param("i", $projectId);
     $stmt->execute();
@@ -162,13 +145,13 @@ function generateUserActivityReport($userId, $projectId = null, $startDate = nul
         WHERE t.created_by = ?
     ";
     
-    // Start building query for tickets completed
+    // Start building query for tickets completed (status_id = 6 is 'Complete')
     $ticketsCompletedSql = "
         SELECT t.*, d.name as deliverable_name, p.name as project_name
         FROM tickets t
         JOIN deliverables d ON t.deliverable_id = d.deliverable_id
         JOIN projects p ON d.project_id = p.project_id
-        WHERE t.assigned_to = ? AND t.status = 'Complete'
+        WHERE t.assigned_to = ? AND t.status_id = 6
     ";
     
     // Start building query for comments
@@ -475,29 +458,19 @@ function generateTicketsByStatusReport($projectId = null) {
     }
     
     $sql = "
-        SELECT t.status, 
+        SELECT s.name as status,
                COUNT(*) as count,
-               SUM(CASE WHEN t.priority = '1-Critical' THEN 1 ELSE 0 END) as critical_count,
-               SUM(CASE WHEN t.priority = '1-Important' THEN 1 ELSE 0 END) as important_count,
-               SUM(CASE WHEN t.priority = '2-Nice to have' THEN 1 ELSE 0 END) as nice_count,
-               SUM(CASE WHEN t.priority = '3-Feature Request' THEN 1 ELSE 0 END) as feature_count,
-               SUM(CASE WHEN t.priority = '4-Nice to have' THEN 1 ELSE 0 END) as low_count
+               SUM(CASE WHEN t.priority_id = 1 THEN 1 ELSE 0 END) as critical_count,
+               SUM(CASE WHEN t.priority_id = 2 THEN 1 ELSE 0 END) as important_count,
+               SUM(CASE WHEN t.priority_id = 3 THEN 1 ELSE 0 END) as nice_count,
+               SUM(CASE WHEN t.priority_id = 4 THEN 1 ELSE 0 END) as feature_count,
+               SUM(CASE WHEN t.priority_id = 5 THEN 1 ELSE 0 END) as low_count
         FROM tickets t
         JOIN deliverables d ON t.deliverable_id = d.deliverable_id
+        JOIN statuses s ON t.status_id = s.status_id
         WHERE 1=1 $projectFilter
-        GROUP BY t.status
-        ORDER BY 
-            CASE 
-                WHEN t.status = 'New' THEN 1
-                WHEN t.status = 'Needs clarification' THEN 2
-                WHEN t.status = 'Assigned' THEN 3
-                WHEN t.status = 'In progress' THEN 4
-                WHEN t.status = 'In review' THEN 5
-                WHEN t.status = 'Complete' THEN 6
-                WHEN t.status = 'Rejected' THEN 7
-                WHEN t.status = 'Ignored' THEN 8
-                ELSE 9
-            END
+        GROUP BY t.status_id, s.name
+        ORDER BY t.status_id
     ";
     
     $stmt = $conn->prepare($sql);
@@ -567,15 +540,15 @@ function generateUserProductivityReport($projectId = null, $startDate = null, $e
     }
     
     $sql = "
-        SELECT 
+        SELECT
             u.user_id,
             u.first_name,
             u.last_name,
             COUNT(DISTINCT t.ticket_id) as total_tickets,
-            SUM(CASE WHEN t.status = 'Complete' THEN 1 ELSE 0 END) as completed_tickets,
-            SUM(CASE WHEN t.status IN ('New', 'Needs clarification', 'Assigned', 'In progress', 'In review') THEN 1 ELSE 0 END) as open_tickets,
-            SUM(CASE WHEN t.priority = '1-Critical' THEN 1 ELSE 0 END) as critical_tickets,
-            SUM(CASE WHEN t.priority = '1-Important' THEN 1 ELSE 0 END) as important_tickets,
+            SUM(CASE WHEN t.status_id = 6 THEN 1 ELSE 0 END) as completed_tickets,
+            SUM(CASE WHEN t.status_id IN (1, 2, 3, 4, 5) THEN 1 ELSE 0 END) as open_tickets,
+            SUM(CASE WHEN t.priority_id = 1 THEN 1 ELSE 0 END) as critical_tickets,
+            SUM(CASE WHEN t.priority_id = 2 THEN 1 ELSE 0 END) as important_tickets,
             (SELECT COUNT(*) FROM comments c WHERE c.user_id = u.user_id) as comment_count
         FROM tickets t
         JOIN deliverables d ON t.deliverable_id = d.deliverable_id
