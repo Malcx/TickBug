@@ -1,55 +1,26 @@
 <?php
+/**
+ * api/deliverables/create.php
+ * Create deliverable API endpoint
+ */
 
-// api/deliverables/create.php
-// Create deliverable API endpoint
-
-// Include helper functions
 require_once '../../includes/helpers.php';
 
-// Start session
-startSession();
+// Initialize API request
+$api = initApiRequest(['loginMessage' => 'You must be logged in to create a deliverable.']);
+$userId = $api['userId'];
 
-// Check if user is logged in
-if (!isLoggedIn()) {
-    $response = ['success' => false, 'message' => 'You must be logged in to create a deliverable.'];
-    sendJsonResponse($response);
-}
+// Get and validate parameters
+$params = getPostParams([
+    ['name' => 'project_id', 'type' => 'int', 'required' => true, 'message' => 'Project ID is required.'],
+    ['name' => 'name', 'type' => 'string', 'required' => true, 'message' => 'Deliverable name is required.'],
+    ['name' => 'description', 'type' => 'string', 'default' => '']
+]);
 
-// Check request method
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $response = ['success' => false, 'message' => 'Invalid request method.'];
-    sendJsonResponse($response);
-}
-
-// Get current user ID
-$userId = getCurrentUserId();
-
-// Get form data
-$projectId = isset($_POST['project_id']) ? (int)$_POST['project_id'] : 0;
-$name = isset($_POST['name']) ? trim($_POST['name']) : '';
-$description = isset($_POST['description']) ? trim($_POST['description']) : '';
-
-// Validate form data
-if (empty($projectId)) {
-    $response = ['success' => false, 'message' => 'Project ID is required.'];
-    sendJsonResponse($response);
-}
-
-if (empty($name)) {
-    $response = ['success' => false, 'message' => 'Deliverable name is required.'];
-    sendJsonResponse($response);
-}
-
-// Check if user has permission
-$userRole = getUserProjectRole($userId, $projectId);
-
-if (!$userRole || $userRole === 'Viewer' || $userRole === 'Tester') {
-    $response = ['success' => false, 'message' => 'You do not have permission to create deliverables.'];
-    sendJsonResponse($response);
-}
+// Check permission
+checkProjectPermission($userId, $params['project_id'], 'create_deliverable', 'You do not have permission to create deliverables.');
 
 // Create deliverable
-$result = createDeliverable($projectId, $name, $description, $userId);
+$result = createDeliverable($params['project_id'], $params['name'], $params['description'], $userId);
 
-// Return response
 sendJsonResponse($result);

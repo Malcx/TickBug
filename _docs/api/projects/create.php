@@ -1,41 +1,23 @@
 <?php
+/**
+ * api/projects/create.php
+ * Create project API endpoint
+ */
 
-// api/projects/create.php
-// Create project API endpoint
-
-// Include helper functions
 require_once '../../includes/helpers.php';
 
-// Start session
-startSession();
+// Initialize API request
+$api = initApiRequest(['loginMessage' => 'You must be logged in to create a project.']);
+$userId = $api['userId'];
 
-// Check if user is logged in
-if (!isLoggedIn()) {
-    $response = ['success' => false, 'message' => 'You must be logged in to create a project.'];
-    sendJsonResponse($response);
-}
-
-// Check request method
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $response = ['success' => false, 'message' => 'Invalid request method.'];
-    sendJsonResponse($response);
-}
-
-// Get current user ID
-$userId = getCurrentUserId();
-
-$name = isset($_POST['name']) ? trim($_POST['name']) : '';
-$description = isset($_POST['description']) ? trim($_POST['description']) : '';
-$themeColor = isset($_POST['theme_color']) ? trim($_POST['theme_color']) : '#20205E';
-
-// Validate form data
-if (empty($name)) {
-    $response = ['success' => false, 'message' => 'Project name is required.'];
-    sendJsonResponse($response);
-}
+// Get and validate parameters
+$params = getPostParams([
+    ['name' => 'name', 'type' => 'string', 'required' => true, 'message' => 'Project name is required.'],
+    ['name' => 'description', 'type' => 'string', 'default' => ''],
+    ['name' => 'theme_color', 'type' => 'string', 'default' => '#20205E']
+]);
 
 // Create project
-$result = createProject($name, $description, $themeColor, $userId);
+$result = createProject($params['name'], $params['description'], $params['theme_color'], $userId);
 
-// Return response
 sendJsonResponse($result);

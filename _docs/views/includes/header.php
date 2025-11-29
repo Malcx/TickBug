@@ -13,22 +13,22 @@ The main header template that's included at the top of each page
     <link rel="icon" type="image/svg+xml" href="/logo.svg">
     <link rel="alternate icon" href="/logo.ico"> <!-- Fallback for browsers that don't support SVG favicons -->
 
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/vars.css">
+    <!-- Consolidated CSS (includes grid, badges, breadcrumbs) -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/grid.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/responsive.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/badges.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/modal.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/breadcrumbs.css"> 
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/project-view.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/deliverable-view.css">
-   
+
+    <!-- Core JS libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+
+    <!-- App JS utilities -->
     <script src="<?php echo BASE_URL; ?>/assets/js/config.js"></script>
-    <script src="<?php echo BASE_URL; ?>/assets/js/modal.js"></script> <!-- Add the custom modal JS -->
-    <script src="<?php echo BASE_URL; ?>/assets/js/project-view.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/utils.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/modal.js"></script>
 </head>
 <body>
     <header class="header">

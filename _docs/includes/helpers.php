@@ -15,6 +15,8 @@ require_once __DIR__ . '/files.php';
 require_once __DIR__ . '/users.php';
 require_once __DIR__ . '/activity.php';
 require_once __DIR__ . '/reports.php';
+require_once __DIR__ . '/api_handler.php';
+require_once __DIR__ . '/../views/includes/components.php';
 
 /**
  * Sanitize output for HTML
